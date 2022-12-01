@@ -24,6 +24,7 @@
   <ItemGroup>
     <ClInclude Include="json.hpp" />
     <ClInclude Include="main.h" />
+    <ClInclude Include="static_vector.hpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>

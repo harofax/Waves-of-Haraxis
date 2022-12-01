@@ -3,6 +3,7 @@
 
 #include <random>
 
+
 using json = nlohmann::json;
 
 // Makes a window transparent by setting a transparency color.
@@ -394,7 +395,6 @@ void render_planets()
         //debug_dest.h = render_scale * 2;
         //debug_dest.w = render_scale * 2;
         //SDL_RenderCopy(gRenderer, texture_atlas, &debug, &debug_dest);
-
 
         SDL_RenderCopy(gRenderer, texture_atlas, &planet_atlas_rect, &render_rect);
 	}

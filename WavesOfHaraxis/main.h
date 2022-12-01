@@ -1,13 +1,11 @@
 ﻿#pragma once
 #include <fstream>
-#include <iostream>
 #include <SDL.h>
 #include <SDL_syswm.h>
-#include <SDL_image.h>
-#include <sstream>
 #include <vector>
 #include <Windows.h>
 #include "json.hpp"
+#include "static_vector.hpp"
 
 struct Planet
 {
