@@ -1,54 +1,9 @@
 // SDL window with transparent background v1.2
-#include <fstream>
-#include <iostream>
-#include <SDL.h>
-#include <SDL_syswm.h>
-#include <SDL_image.h>
-#include <sstream>
-#include <vector>
-#include <Windows.h>
-//#include "rapidjson/document.h"
-#include "json.hpp"
+#include "main.h"
+
+#include <random>
 
 using json = nlohmann::json;
-
-#define SCALE 4
-
-// Window
-SDL_Window* gWindow = nullptr;
-
-// Renderer
-SDL_Renderer* gRenderer = nullptr;
-
-SDL_Texture* texture_atlas;
-const std::string texture_atlas_json = "res\\spritesheet.json";
-
-constexpr int NUM_EVOLUTIONS = 3;
-
-std::vector<SDL_Rect> planet_rects;
-std::vector<SDL_Rect> player_rects;
-std::vector<SDL_Rect> enemy_rects;
-
-// screen surface
-SDL_Surface* gScreenSurface = nullptr;
-
-// Initializes SDL and creates a window
-bool init();
-
-// Loads media files
-bool loadMedia();
-
-// Loads individual image
-SDL_Surface* loadSurface(std::string path);
-
-//Load individual image as texture
-SDL_Texture* loadTexture(std::string path);
-
-// parse json data
-json load_json_data(const std::string& json_path);
-
-//Frees media and shuts down SDL
-void close();
 
 // Makes a window transparent by setting a transparency color.
 bool MakeWindowTransparent(SDL_Window* window, COLORREF colorKey)
@@ -65,12 +20,6 @@ bool MakeWindowTransparent(SDL_Window* window, COLORREF colorKey)
     // Set transparency color
     return SetLayeredWindowAttributes(hWnd, colorKey, 0, LWA_COLORKEY);
 }
-
-// Get resolution of primary monitor
-const int desktopWidth = GetSystemMetrics(SM_CXVIRTUALSCREEN);
-const int desktopHeight = GetSystemMetrics(SM_CYVIRTUALSCREEN);
-
-void handle_mouse_input(SDL_Event* e);
 
 int main(int argc, char** argv)
 {
@@ -89,33 +38,9 @@ int main(int argc, char** argv)
         }
     }
 
-    //int glorpo_height = 0;
-    //int glorpo_width = 0;
-    //
-    //SDL_QueryTexture(creature_texture_sheet, nullptr, nullptr, &glorpo_width, &glorpo_height);
-    //
-    //SDL_Rect glorpo_dest;
-    //glorpo_dest.x = desktopWidth / 2;
-    //glorpo_dest.y = desktopHeight / 2;
-    //glorpo_dest.h = CREATURE_SPRITE_SIZE;
-    //glorpo_dest.w = CREATURE_SPRITE_SIZE;
-    //
-    //glorpo_dest.w *= SCALE;
-    //glorpo_dest.h *= SCALE;
+    init_planets();
 
-
-    //int bag_height = 0;
-    //int bag_width = 0;
-    //
-    //SDL_QueryTexture(bag_texture, nullptr, nullptr, &bag_width, &bag_height);
-    //
-    //SDL_Rect inventoryBagView;
-    //inventoryBagView.x = 0;
-    //inventoryBagView.y = desktopHeight - (bag_height * SCALE);
-    //inventoryBagView.h = bag_height * SCALE;
-    //inventoryBagView.w = bag_width * SCALE;
-
-
+    std::cout << "desktop width: " << desktopWidth << "\ndesktop height: " << desktopHeight << std::endl;
 
     // Loop until user quits
     bool quit = false;
@@ -125,8 +50,6 @@ int main(int argc, char** argv)
 
     // Current anim frame
     int frame = 0;
-
-
 
     while (!quit)
     {
@@ -145,7 +68,7 @@ int main(int argc, char** argv)
                 switch (event.key.keysym.sym)
                 {
                     case SDLK_SPACE:
-                        //glorpo_dest.x += 5;
+                        init_planets();
                         break;
                     case SDLK_ESCAPE:
                         quit = true;
@@ -156,27 +79,13 @@ int main(int argc, char** argv)
         // Clear
         SDL_RenderClear(gRenderer);
 
-        //SDL_RenderSetViewport(gRenderer, &glorpo_dest);
-        //const SDL_Rect* currentClip = &gSpriteClips[frame / 6];
+        render_planets();
         //// Render texture
         //SDL_RenderCopy(gRenderer, creature_texture_sheet, currentClip, nullptr);
-        //
-        //SDL_RenderSetViewport(gRenderer, &inventoryBagView);
-        //
-        //SDL_RenderCopy(gRenderer, bag_texture, nullptr, nullptr);
 
-        // Render the square to the screen
+
         SDL_RenderPresent(gRenderer);
 
-        //++frame;
-        //
-        //if (frame / 6 >= IDLE_ANIMATION_FRAMES)
-        //{
-        //    frame = 0;
-        //}
-
-
-        //move_randomly(glorpo_dest);
     }
 
     close();
@@ -233,7 +142,6 @@ void handle_mouse_input(SDL_Event* e, SDL_Rect& glorpo_pos)
     }
 }
 
-
 bool init()
 {
     bool success = true;
@@ -284,9 +192,10 @@ bool init()
         }
     }
 
+
+
     return success;
 }
-
 
 
 bool loadMedia()
@@ -301,48 +210,11 @@ bool loadMedia()
         success = false;
     } else
     {
-        json data = load_json_data(texture_atlas_json);
+        // try to load json data
+	    json data = load_json_data(texture_atlas_json);
 
-        const auto planet_json = data["sprites"]["planet_rects"];
-        
-        for (auto planet_sprite : planet_json)
-        {
-            
-            SDL_Rect planet_rect;
-            planet_rect.x = planet_sprite["rect"]["x"];
-            planet_rect.y = planet_sprite["rect"]["y"];
-            planet_rect.w = planet_sprite["rect"]["w"];
-            planet_rect.h = planet_sprite["rect"]["h"];
-
-            planet_rects.push_back(planet_rect);
-        }
-
-        const auto player_json = data["sprites"]["player"];
-
-        for (auto player_sprite : player_json)
-        {
-            SDL_Rect player_rect;
-            player_rect.x = player_sprite["rect"]["x"];
-            player_rect.y = player_sprite["rect"]["y"];
-            player_rect.w = player_sprite["rect"]["w"];
-            player_rect.h = player_sprite["rect"]["h"];
-
-            player_rects.push_back(player_rect);
-        }
-
-        const auto enemy_json = data["sprites"]["enemy"];
-
-        for (auto enemy_sprite : enemy_json)
-        {
-            SDL_Rect enemy_rect;
-            enemy_rect.x = enemy_sprite["rect"]["x"];
-            enemy_rect.y = enemy_sprite["rect"]["y"];
-            enemy_rect.w = enemy_sprite["rect"]["w"];
-            enemy_rect.h = enemy_sprite["rect"]["h"];
-
-            enemy_rects.push_back(enemy_rect);
-        }
-
+        // parse data and set up stuff
+        parse_json_data(data);
     }
 
     return success;
@@ -359,6 +231,92 @@ json load_json_data(const std::string& json_path)
     return data;
 }
 
+void parse_json_data(json::const_reference data)
+{
+    // config according to json data
+    num_background_planets = data["config"]["num_bg_planets"];
+    render_scale = data["config"]["scale"];
+
+    const auto planet_json = data["sprites"]["planets"];
+
+    for (auto planet_sprite : planet_json)
+    {
+        SDL_Rect planet_rect;
+        planet_rect.x = planet_sprite["rect"]["x"];
+        planet_rect.y = planet_sprite["rect"]["y"];
+        planet_rect.w = planet_sprite["rect"]["w"];
+        planet_rect.h = planet_sprite["rect"]["h"];
+
+        planet_rects.push_back(planet_rect);
+
+    }
+
+    const auto player_json = data["sprites"]["player"];
+
+    for (auto player_sprite : player_json)
+    {
+        SDL_Rect player_rect;
+        player_rect.x = player_sprite["rect"]["x"];
+        player_rect.y = player_sprite["rect"]["y"];
+        player_rect.w = player_sprite["rect"]["w"];
+        player_rect.h = player_sprite["rect"]["h"];
+
+        player_rects.push_back(player_rect);
+    }
+
+    const auto enemy_json = data["sprites"]["enemy"];
+
+    for (auto enemy_sprite : enemy_json)
+    {
+        SDL_Rect enemy_rect;
+        enemy_rect.x = enemy_sprite["rect"]["x"];
+        enemy_rect.y = enemy_sprite["rect"]["y"];
+        enemy_rect.w = enemy_sprite["rect"]["w"];
+        enemy_rect.h = enemy_sprite["rect"]["h"];
+
+        enemy_rects.push_back(enemy_rect);
+    }
+}
+
+
+void init_planets()
+{
+    planets.clear();
+    std::random_device rd;
+    std::mt19937 gen(rd());
+    std::uniform_int_distribution<> x_distr(0, desktopWidth);
+    std::uniform_int_distribution<> y_distr(0, desktopHeight);
+    std::uniform_int_distribution<> sprite_distr(0, planet_rects.size() - 1);
+
+
+
+    for (int i = 0; i < num_background_planets; i++)
+    {
+
+        int pos_x = x_distr(gen);
+        int pos_y = y_distr(gen);
+        int sprite_idx = sprite_distr(gen);
+
+        auto& planet_rect = planet_rects[sprite_idx];
+
+        int x_width = pos_x + planet_rect.w * render_scale;
+        int y_height = pos_y + planet_rect.h * render_scale;
+
+        if (x_width > desktopWidth)
+        {
+            pos_x -= planet_rect.w * render_scale;
+        }
+    	if (y_height > desktopHeight)
+        {
+            pos_y -= planet_rect.h * render_scale;
+        }
+        
+
+        Planet random_planet(pos_x, pos_y, sprite_idx);
+
+        planets.push_back(random_planet);
+    }
+}
 
 SDL_Surface* loadSurface(std::string path)
 {
@@ -409,6 +367,37 @@ SDL_Texture* loadTexture(std::string path)
     }
 
     return newTexture;
+}
+
+void render_planets()
+{
+	for (Planet planet : planets)
+	{
+        auto planet_atlas_rect = planet_rects[planet.sprite_index];
+
+		SDL_Rect render_rect;
+		render_rect.x = planet.x;
+        render_rect.y = planet.y;
+        render_rect.w = planet_atlas_rect.w * render_scale;
+        render_rect.h = planet_atlas_rect.h * render_scale;
+
+        //SDL_Rect debug;
+        //debug.x = 142;
+        //debug.y = 144;
+        //debug.w = 1;
+        //debug.h = 1;
+        //
+        //SDL_Rect debug_dest;
+        //debug_dest.x = planet.x;
+        //debug_dest.y = planet.y;
+        //
+        //debug_dest.h = render_scale * 2;
+        //debug_dest.w = render_scale * 2;
+        //SDL_RenderCopy(gRenderer, texture_atlas, &debug, &debug_dest);
+
+
+        SDL_RenderCopy(gRenderer, texture_atlas, &planet_atlas_rect, &render_rect);
+	}
 }
 
 

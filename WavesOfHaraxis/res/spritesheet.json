@@ -222,7 +222,11 @@
 				}
 			}
 		}
-		
+
+	},
+	"config": {
+		"num_bg_planets": 15,
+		"scale": 2
 	},
 	"meta": {
 		"image": "spritesheet.png",
@@ -230,7 +234,6 @@
 		"size": {
 			"w": 352,
 			"h": 196
-		},
-		"scale": "1"
+		}
 	}
 }
