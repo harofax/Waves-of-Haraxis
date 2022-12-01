@@ -1,10 +1,16 @@
 // SDL window with transparent background v1.2
+#include <fstream>
 #include <iostream>
 #include <SDL.h>
 #include <SDL_syswm.h>
 #include <SDL_image.h>
+#include <sstream>
 #include <vector>
 #include <Windows.h>
+//#include "rapidjson/document.h"
+#include "json.hpp"
+
+using json = nlohmann::json;
 
 #define SCALE 4
 
@@ -14,14 +20,14 @@ SDL_Window* gWindow = nullptr;
 // Renderer
 SDL_Renderer* gRenderer = nullptr;
 
-constexpr int NUM_CREATURE_SPRITES = 6;
-// array for the creatures/entities
-//SDL_Texture* creature_textures[NUM_CREATURE_SPRITES];
 SDL_Texture* texture_atlas;
+const std::string texture_atlas_json = "res\\spritesheet.json";
 
-// dynamic array for planets, as they are dynamically loaded
-// and I wanna be able to just plop them in the folder and have more
-std::vector<SDL_Texture*> planet_textures;
+constexpr int NUM_EVOLUTIONS = 3;
+
+std::vector<SDL_Rect> planet_rects;
+std::vector<SDL_Rect> player_rects;
+std::vector<SDL_Rect> enemy_rects;
 
 // screen surface
 SDL_Surface* gScreenSurface = nullptr;
@@ -38,14 +44,11 @@ SDL_Surface* loadSurface(std::string path);
 //Load individual image as texture
 SDL_Texture* loadTexture(std::string path);
 
-SDL_Texture* loadCreatures(SDL_Texture* creature_texture_array, std::string creature_path);
-
-std::vector<SDL_Texture*> load_planets(std::string planet_path);
+// parse json data
+json load_json_data(const std::string& json_path);
 
 //Frees media and shuts down SDL
 void close();
-void destroy_texture_array(SDL_Texture* texture_array);
-void destroy_texture_list(std::vector<SDL_Texture*> texture_list);
 
 // Makes a window transparent by setting a transparency color.
 bool MakeWindowTransparent(SDL_Window* window, COLORREF colorKey)
@@ -290,24 +293,72 @@ bool loadMedia()
 {
     bool success = true;
 
-    bool creature_load_success = true;
-    creature_load_success = loadCreatures(*creature_textures, "res\\creatures");
+    texture_atlas = loadTexture("res\\spritesheet.png");
 
-    if (!creature_load_success)
+    if (texture_atlas == nullptr)
     {
-        printf("failed to load creature sprites!");
+        printf("failed to load sprite sheet!");
         success = false;
+    } else
+    {
+        json data = load_json_data(texture_atlas_json);
+
+        const auto planet_json = data["sprites"]["planet_rects"];
+        
+        for (auto planet_sprite : planet_json)
+        {
+            
+            SDL_Rect planet_rect;
+            planet_rect.x = planet_sprite["rect"]["x"];
+            planet_rect.y = planet_sprite["rect"]["y"];
+            planet_rect.w = planet_sprite["rect"]["w"];
+            planet_rect.h = planet_sprite["rect"]["h"];
+
+            planet_rects.push_back(planet_rect);
+        }
+
+        const auto player_json = data["sprites"]["player"];
+
+        for (auto player_sprite : player_json)
+        {
+            SDL_Rect player_rect;
+            player_rect.x = player_sprite["rect"]["x"];
+            player_rect.y = player_sprite["rect"]["y"];
+            player_rect.w = player_sprite["rect"]["w"];
+            player_rect.h = player_sprite["rect"]["h"];
+
+            player_rects.push_back(player_rect);
+        }
+
+        const auto enemy_json = data["sprites"]["enemy"];
+
+        for (auto enemy_sprite : enemy_json)
+        {
+            SDL_Rect enemy_rect;
+            enemy_rect.x = enemy_sprite["rect"]["x"];
+            enemy_rect.y = enemy_sprite["rect"]["y"];
+            enemy_rect.w = enemy_sprite["rect"]["w"];
+            enemy_rect.h = enemy_sprite["rect"]["h"];
+
+            enemy_rects.push_back(enemy_rect);
+        }
+
     }
 
-    planet_textures = load_planets("res\\planets");
-
-    if (planet_textures.empty())
-    {
-        printf("Failed to load planet textures!");
-        success = false;
-    }
     return success;
 }
+
+json load_json_data(const std::string& json_path)
+{
+    // load json file
+    std::ifstream json_file(json_path);
+
+	// parse file
+    json data = json::parse(json_file);
+
+    return data;
+}
+
 
 SDL_Surface* loadSurface(std::string path)
 {
@@ -367,20 +418,14 @@ void close()
     gWindow = nullptr;
 
     
-    SDL_DestroyTexture(creature_texture_atlas);
+    SDL_DestroyTexture(texture_atlas);
 
-    destroy_texture_list(planet_textures);
 
     SDL_DestroyRenderer(gRenderer);
     gRenderer = nullptr;
 
     IMG_Quit();
     SDL_Quit();
-}
-
-void destroy_texture_list(std::vector<SDL_Texture*> texture_list)
-{
-	for (auto& creature_texture : texture_list)
 }
 
 

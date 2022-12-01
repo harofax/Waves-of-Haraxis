@@ -1,249 +1,230 @@
 {
-	"frames": {
-		"creature_player_huge.png": {
-			"frame": {
-				"x": 1,
-				"y": 1,
-				"w": 64,
-				"h": 64
+	"sprites": {
+		"player": {
+			"huge": {
+				"rect": {
+					"x": 1,
+					"y": 1,
+					"w": 64,
+					"h": 64
+				},
+				"spriteSourceSize": {
+					"x": 0,
+					"y": 0,
+					"w": 64,
+					"h": 64
+				},
+				"sourceSize": {
+					"w": 64,
+					"h": 64
+				}
 			},
-			"rotated": false,
-			"trimmed": false,
-			"spriteSourceSize": {
-				"x": 0,
-				"y": 0,
-				"w": 64,
-				"h": 64
+			"small": {
+				"rect": {
+					"x": 67,
+					"y": 1,
+					"w": 16,
+					"h": 16
+				},
+				"spriteSourceSize": {
+					"x": 0,
+					"y": 0,
+					"w": 16,
+					"h": 16
+				},
+				"sourceSize": {
+					"w": 16,
+					"h": 16
+				}
 			},
-			"sourceSize": {
-				"w": 64,
-				"h": 64
+			"tiny": {
+				"rect": {
+					"x": 85,
+					"y": 1,
+					"w": 4,
+					"h": 4
+				},
+				"spriteSourceSize": {
+					"x": 0,
+					"y": 0,
+					"w": 4,
+					"h": 4
+				},
+				"sourceSize": {
+					"w": 4,
+					"h": 4
+				}
 			}
 		},
-		"creature_player_small.png": {
-			"frame": {
-				"x": 67,
-				"y": 1,
-				"w": 16,
-				"h": 16
+		"enemy": {
+			"huge": {
+				"rect": {
+					"x": 91,
+					"y": 1,
+					"w": 64,
+					"h": 64
+				},
+				"spriteSourceSize": {
+					"x": 0,
+					"y": 0,
+					"w": 64,
+					"h": 64
+				},
+				"sourceSize": {
+					"w": 64,
+					"h": 64
+				}
 			},
-			"rotated": false,
-			"trimmed": false,
-			"spriteSourceSize": {
-				"x": 0,
-				"y": 0,
-				"w": 16,
-				"h": 16
+			"small": {
+				"rect": {
+					"x": 157,
+					"y": 1,
+					"w": 16,
+					"h": 16
+				},
+				"spriteSourceSize": {
+					"x": 0,
+					"y": 0,
+					"w": 16,
+					"h": 16
+				},
+				"sourceSize": {
+					"w": 16,
+					"h": 16
+				}
 			},
-			"sourceSize": {
-				"w": 16,
-				"h": 16
+			"tiny": {
+				"rect": {
+					"x": 175,
+					"y": 1,
+					"w": 4,
+					"h": 4
+				},
+				"spriteSourceSize": {
+					"x": 0,
+					"y": 0,
+					"w": 4,
+					"h": 4
+				},
+				"sourceSize": {
+					"w": 4,
+					"h": 4
+				}
 			}
 		},
-		"creature_player_tiny.png": {
-			"frame": {
-				"x": 85,
-				"y": 1,
-				"w": 4,
-				"h": 4
+		"planets": {
+			"big_ring": {
+				"rect": {
+					"x": 157,
+					"y": 19,
+					"w": 64,
+					"h": 64
+				},
+				"spriteSourceSize": {
+					"x": 0,
+					"y": 0,
+					"w": 64,
+					"h": 64
+				},
+				"sourceSize": {
+					"w": 64,
+					"h": 64
+				}
 			},
-			"rotated": false,
-			"trimmed": false,
-			"spriteSourceSize": {
-				"x": 0,
-				"y": 0,
-				"w": 4,
-				"h": 4
+			"colossal": {
+				"rect": {
+					"x": 1,
+					"y": 67,
+					"w": 128,
+					"h": 128
+				},
+				"spriteSourceSize": {
+					"x": 0,
+					"y": 0,
+					"w": 128,
+					"h": 128
+				},
+				"sourceSize": {
+					"w": 128,
+					"h": 128
+				}
 			},
-			"sourceSize": {
-				"w": 4,
-				"h": 4
-			}
-		},
-		"creature_ship_huge.png": {
-			"frame": {
-				"x": 91,
-				"y": 1,
-				"w": 64,
-				"h": 64
+			"colossal_rings": {
+				"rect": {
+					"x": 223,
+					"y": 1,
+					"w": 128,
+					"h": 128
+				},
+				"spriteSourceSize": {
+					"x": 0,
+					"y": 0,
+					"w": 128,
+					"h": 128
+				},
+				"sourceSize": {
+					"w": 128,
+					"h": 128
+				}
 			},
-			"rotated": false,
-			"trimmed": false,
-			"spriteSourceSize": {
-				"x": 0,
-				"y": 0,
-				"w": 64,
-				"h": 64
+			"green": {
+				"rect": {
+					"x": 131,
+					"y": 131,
+					"w": 32,
+					"h": 32
+				},
+				"spriteSourceSize": {
+					"x": 0,
+					"y": 0,
+					"w": 32,
+					"h": 32
+				},
+				"sourceSize": {
+					"w": 32,
+					"h": 32
+				}
 			},
-			"sourceSize": {
-				"w": 64,
-				"h": 64
-			}
-		},
-		"creature_ship_small.png": {
-			"frame": {
-				"x": 157,
-				"y": 1,
-				"w": 16,
-				"h": 16
+			"purple": {
+				"rect": {
+					"x": 165,
+					"y": 131,
+					"w": 32,
+					"h": 32
+				},
+				"spriteSourceSize": {
+					"x": 0,
+					"y": 0,
+					"w": 32,
+					"h": 32
+				},
+				"sourceSize": {
+					"w": 32,
+					"h": 32
+				}
 			},
-			"rotated": false,
-			"trimmed": false,
-			"spriteSourceSize": {
-				"x": 0,
-				"y": 0,
-				"w": 16,
-				"h": 16
-			},
-			"sourceSize": {
-				"w": 16,
-				"h": 16
-			}
-		},
-		"creature_ship_tiny.png": {
-			"frame": {
-				"x": 175,
-				"y": 1,
-				"w": 4,
-				"h": 4
-			},
-			"rotated": false,
-			"trimmed": false,
-			"spriteSourceSize": {
-				"x": 0,
-				"y": 0,
-				"w": 4,
-				"h": 4
-			},
-			"sourceSize": {
-				"w": 4,
-				"h": 4
-			}
-		},
-		"planet_big_ring.png": {
-			"frame": {
-				"x": 157,
-				"y": 19,
-				"w": 64,
-				"h": 64
-			},
-			"rotated": false,
-			"trimmed": false,
-			"spriteSourceSize": {
-				"x": 0,
-				"y": 0,
-				"w": 64,
-				"h": 64
-			},
-			"sourceSize": {
-				"w": 64,
-				"h": 64
-			}
-		},
-		"planet_colossal.png": {
-			"frame": {
-				"x": 1,
-				"y": 67,
-				"w": 128,
-				"h": 128
-			},
-			"rotated": false,
-			"trimmed": false,
-			"spriteSourceSize": {
-				"x": 0,
-				"y": 0,
-				"w": 128,
-				"h": 128
-			},
-			"sourceSize": {
-				"w": 128,
-				"h": 128
-			}
-		},
-		"planet_colossal_rings.png": {
-			"frame": {
-				"x": 223,
-				"y": 1,
-				"w": 128,
-				"h": 128
-			},
-			"rotated": false,
-			"trimmed": false,
-			"spriteSourceSize": {
-				"x": 0,
-				"y": 0,
-				"w": 128,
-				"h": 128
-			},
-			"sourceSize": {
-				"w": 128,
-				"h": 128
-			}
-		},
-		"planet_green.png": {
-			"frame": {
-				"x": 131,
-				"y": 131,
-				"w": 32,
-				"h": 32
-			},
-			"rotated": false,
-			"trimmed": false,
-			"spriteSourceSize": {
-				"x": 0,
-				"y": 0,
-				"w": 32,
-				"h": 32
-			},
-			"sourceSize": {
-				"w": 32,
-				"h": 32
-			}
-		},
-		"planet_purple.png": {
-			"frame": {
-				"x": 165,
-				"y": 131,
-				"w": 32,
-				"h": 32
-			},
-			"rotated": false,
-			"trimmed": false,
-			"spriteSourceSize": {
-				"x": 0,
-				"y": 0,
-				"w": 32,
-				"h": 32
-			},
-			"sourceSize": {
-				"w": 32,
-				"h": 32
-			}
-		},
-		"planet_spinny.png": {
-			"frame": {
-				"x": 199,
-				"y": 131,
-				"w": 32,
-				"h": 32
-			},
-			"rotated": false,
-			"trimmed": false,
-			"spriteSourceSize": {
-				"x": 0,
-				"y": 0,
-				"w": 32,
-				"h": 32
-			},
-			"sourceSize": {
-				"w": 32,
-				"h": 32
+			"spinny": {
+				"rect": {
+					"x": 199,
+					"y": 131,
+					"w": 32,
+					"h": 32
+				},
+				"spriteSourceSize": {
+					"x": 0,
+					"y": 0,
+					"w": 32,
+					"h": 32
+				},
+				"sourceSize": {
+					"w": 32,
+					"h": 32
+				}
 			}
 		}
+		
 	},
 	"meta": {
-		"app": "http://www.codeandweb.com/texturepacker",
-		"version": "1.0",
 		"image": "spritesheet.png",
 		"format": "RGBA8888",
 		"size": {
