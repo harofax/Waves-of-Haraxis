@@ -19,11 +19,15 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Game.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="TransparentWindow.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="data_table.h" />
+    <ClInclude Include="Game.h" />
     <ClInclude Include="json.hpp" />
-    <ClInclude Include="main.h" />
+    <ClInclude Include="TransparentWindow.h" />
     <ClInclude Include="static_vector.hpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
