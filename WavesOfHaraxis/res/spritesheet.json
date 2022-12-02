@@ -226,6 +226,8 @@
 	},
 	"config": {
 		"num_bg_planets": 15,
+		"num_player_ships": 20,
+		"num_enemy_ships": 20,
 		"scale": 2
 	},
 	"meta": {

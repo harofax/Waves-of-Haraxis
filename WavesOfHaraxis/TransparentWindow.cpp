@@ -43,7 +43,6 @@ void TransparentWindow::Run()
 			handle_mouse_input(&event);
 		}
 
-
 		// tick stuff
 		{
 			const auto new_tick = SDL_GetTicks64();
