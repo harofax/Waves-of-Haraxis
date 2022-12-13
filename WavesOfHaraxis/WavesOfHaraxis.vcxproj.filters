@@ -18,24 +18,21 @@
     <ClCompile Include="main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="TransparentWindow.cpp">
+    <ClCompile Include="Game.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Game.cpp">
+    <ClCompile Include="core\TransparentWindow.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="TransparentWindow.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Game.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="ecs\ecs.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="component_data.h">
+    <ClInclude Include="core\TransparentWindow.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

@@ -1,10 +1,16 @@
 #include "Game.h"
 
+#include <bitset>
+
+#define PRINT(x) std::cout << (x) << std::endl
+
 // --- game config ---
 
 // texture atlas paths
 const char* texture_atlas_image_path = "res\\spritesheet.png";
 const char* texture_atlas_json_path = "res\\spritesheet.json";
+
+// -- game config --
 
 int num_background_planets = 0;
 int num_player_ships = 0;
@@ -13,18 +19,15 @@ int render_scale = 2;
 
 // --- data ---
 
-// won't use more than 64 sprites 
-SDL_Rect sprite_table[64];
+// won't use more than 16 sprites 
+SDL_Rect sprite_table[16];
 //std::map<int, SDL_Rect> sprite_map;
 
-//Planet planet_table[64];
-//
-//PlayerShip player_table[64];
 
 // 0 -> planet, 1 -> player, 2 -> enemy
-const int PLANET_RANGE = 0;
-const int PLAYER_RANGE = 1;
-const int ENEMY_RANGE = 2;
+const int PLANET_SPRITE_RANGE_INDEX = 0;
+const int PLAYER_SPRITE_RANGE_INDEX = 1;
+const int ENEMY_SPRITE_RANGE_INDEX = 2;
 int spriteRangeTable[3];
 
 Game::Game(const char* window_name) : TransparentWindow(window_name)
@@ -70,7 +73,7 @@ void parse_json_data(json::const_reference data)
         sprite_table[sprite_index] = planet_rect;
         sprite_index++;
     }
-    spriteRangeTable[PLANET_RANGE] = sprite_index - 1;
+    spriteRangeTable[PLANET_SPRITE_RANGE_INDEX] = sprite_index - 1;
 
     const auto player_json = data["sprites"]["player"];
 
@@ -85,7 +88,7 @@ void parse_json_data(json::const_reference data)
         sprite_table[sprite_index] = player_rect;
         sprite_index++;
     }
-    spriteRangeTable[PLAYER_RANGE] = sprite_index - 1;
+    spriteRangeTable[PLAYER_SPRITE_RANGE_INDEX] = sprite_index - 1;
 
     const auto enemy_json = data["sprites"]["enemy"];
 
@@ -101,7 +104,7 @@ void parse_json_data(json::const_reference data)
     	sprite_index++;
     }
 
-    spriteRangeTable[ENEMY_RANGE] = sprite_index - 1;
+    spriteRangeTable[ENEMY_SPRITE_RANGE_INDEX] = sprite_index - 1;
 }
 
 bool load_json_data(const char* json_path, json& data_out)
@@ -149,7 +152,30 @@ bool Game::load_config()
 
 void Game::init_stuff()
 {
+    int shift = 2;
 
+	std::bitset<8> one(1);
+    PRINT(one);
+
+    uint8_t mask = 1 << shift;
+    std::bitset<8> onemask(mask);
+    PRINT("ID LOOKS LIKE THIS:");
+    PRINT(onemask);
+
+    uint8_t unmask = 1 >> shift;
+    std::bitset<8> unmaskbit(unmask);
+    PRINT("REVERSE?? shift back:");
+    unsigned long index;
+    BitScanReverse(&index, mask);
+    PRINT(index);
+
+    for (int i = 0; i < 0; i++)
+    {
+	    const auto e = world.create_entity();
+
+    	PRINT("id: " );
+        PRINT(e);
+    }
 }
 
 void Game::init_planets()
@@ -157,8 +183,8 @@ void Game::init_planets()
     std::uniform_int_distribution<> x_pos_dist(0, desktopWidth);
     std::uniform_int_distribution<> y_pos_dist(0, desktopHeight);
 
+    std::uniform_int_distribution<> sprite_dist(0, spriteRangeTable[PLANET_SPRITE_RANGE_INDEX]);
 
-    std::uniform_int_distribution<> sprite_dist(0, spriteRangeTable[PLANET_RANGE]);
     for (int i = 0; i < num_background_planets; i++)
     {
         int pos_x = x_pos_dist(generator);
@@ -199,7 +225,7 @@ void Game::init_players()
     {
         int pos_x = x_pos_dist(generator);
         int pos_y = y_pos_dist(generator);
-        int sprite_index = spriteRangeTable[PLANET_RANGE] + 2;
+        int sprite_index = spriteRangeTable[PLANET_SPRITE_RANGE_INDEX] + 2;
 
         auto& rect = sprite_table[sprite_index];
 

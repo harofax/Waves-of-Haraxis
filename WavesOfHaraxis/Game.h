@@ -33,6 +33,8 @@ public:
 
 private:
 	SDL_Texture* texture_atlas {nullptr};
+	ecs::world world;
+	ecs::entity_id entities[ecs::MAX_ENTITIES];
 	//json load_json_data(const char* json_path) const;
 };
 

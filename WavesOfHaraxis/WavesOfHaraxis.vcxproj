@@ -19,15 +19,14 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="core\TransparentWindow.cpp" />
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="TransparentWindow.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="component_data.h" />
+    <ClInclude Include="core\TransparentWindow.h" />
     <ClInclude Include="ecs\ecs.h" />
     <ClInclude Include="Game.h" />
-    <ClInclude Include="TransparentWindow.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
