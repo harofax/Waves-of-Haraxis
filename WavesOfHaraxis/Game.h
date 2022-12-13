@@ -1,19 +1,22 @@
 #pragma once
-#include "TransparentWindow.h"
+#include "core/TransparentWindow.h"
 #include <random>
-#include "json.hpp"
+#include "ext/json.hpp"
+#include "ecs/ecs.h"
+#include <fstream>
 
 using json = nlohmann::json;
 
 class Game : public TransparentWindow
 {
 public:
-	
 	Game(const char* window_name);
 	~Game();
 
 	bool load_media();
 	bool load_config();
+
+	void init_stuff();
 	void init_planets();
 	void init_players();
 	void init_enemies();

@@ -1,36 +1,8 @@
 #include "Game.h"
 
-#include <fstream>
+// --- game config ---
 
-//#include "data_table.h"
-
-struct Sprite
-{
-    int sprite_index;
-};
-
-struct Position
-{
-    int x;
-    int y;
-};
-
-struct Planet
-{
-    int x;
-    int y;
-    int sprite_index;
-};
-
-struct PlayerShip
-{
-    int x;
-    int y;
-    int sprite_index;
-};
-
-//TODO: rename files to atlas because that is cooler than sheet
-// (and sheet is more tied to animations in my mind)
+// texture atlas paths
 const char* texture_atlas_image_path = "res\\spritesheet.png";
 const char* texture_atlas_json_path = "res\\spritesheet.json";
 
@@ -39,18 +11,21 @@ int num_player_ships = 0;
 int num_enemy_ships = 0;
 int render_scale = 2;
 
-SDL_Rect sprite_table[1024];
+// --- data ---
 
-Planet planet_table[64];
+// won't use more than 64 sprites 
+SDL_Rect sprite_table[64];
+//std::map<int, SDL_Rect> sprite_map;
 
-PlayerShip player_table[64];
+//Planet planet_table[64];
+//
+//PlayerShip player_table[64];
 
 // 0 -> planet, 1 -> player, 2 -> enemy
 const int PLANET_RANGE = 0;
 const int PLAYER_RANGE = 1;
 const int ENEMY_RANGE = 2;
 int spriteRangeTable[3];
-
 
 Game::Game(const char* window_name) : TransparentWindow(window_name)
 {
@@ -62,9 +37,10 @@ Game::Game(const char* window_name) : TransparentWindow(window_name)
 	}
 	else if (!load_config())
 	{
-		
+        printf("Could not load config file properly");
 	}
 
+    init_stuff();
     init_planets();
     init_players();
 	
@@ -167,6 +143,13 @@ bool Game::load_config()
         return false;
 	}
     parse_json_data(data);
+
+	return true;
+}
+
+void Game::init_stuff()
+{
+
 }
 
 void Game::init_planets()
@@ -196,14 +179,14 @@ void Game::init_planets()
             pos_y -= planet_rect.h * render_scale;
         }
 
-        Planet random_planet
-        {
-            pos_x,
-            pos_y,
-            sprite_index
-        };
-
-        planet_table[i] = random_planet;
+        //Planet random_planet
+        //{
+        //    pos_x,
+        //    pos_y,
+        //    sprite_index
+        //};
+        //
+        //planet_table[i] = random_planet;
     }
 }
 
@@ -232,14 +215,14 @@ void Game::init_players()
             pos_y -= rect.h * render_scale;
         }
 
-        PlayerShip player
-        {
-            pos_x,
-            pos_y,
-            sprite_index
-        };
-        printf("player#%d intialized, pos: (%d, %d)\n", i, pos_x, pos_y);
-        player_table[i] = player;
+        //PlayerShip player
+        //{
+        //    pos_x,
+        //    pos_y,
+        //    sprite_index
+        //};
+        //printf("player#%d intialized, pos: (%d, %d)\n", i, pos_x, pos_y);
+        //player_table[i] = player;
     }
 
 }
@@ -252,58 +235,58 @@ void Game::init_enemies()
 
 void Game::draw_planets(SDL_Renderer* renderer)
 {
-	for (Planet& planet : planet_table)
-	{
-        auto planet_atlas_rect = sprite_table[planet.sprite_index];
-
-        SDL_Rect render_rect
-        {
-            planet.x,
-            planet.y,
-            planet_atlas_rect.w * render_scale,
-            planet_atlas_rect.h * render_scale
-        };
-
-        //SDL_Rect debug;
-        //debug.x = 142;
-        //debug.y = 144;
-        //debug.w = 1;
-        //debug.h = 1;
-        //
-        //SDL_Rect debug_dest;
-        //debug_dest.x = planet.x;
-        //debug_dest.y = planet.y;
-        //
-        //debug_dest.h = render_scale * 2;
-        //debug_dest.w = render_scale * 2;
-        //SDL_RenderCopy(gRenderer, texture_atlas, &debug, &debug_dest);
-
-        SDL_RenderCopy(renderer, texture_atlas, &planet_atlas_rect, &render_rect);
-	}
+	//for (Planet& planet : planet_table)
+	//{
+    //    auto planet_atlas_rect = sprite_table[planet.sprite_index];
+    //
+    //    SDL_Rect render_rect
+    //    {
+    //        planet.x,
+    //        planet.y,
+    //        planet_atlas_rect.w * render_scale,
+    //        planet_atlas_rect.h * render_scale
+    //    };
+    //
+    //    //SDL_Rect debug;
+    //    //debug.x = 142;
+    //    //debug.y = 144;
+    //    //debug.w = 1;
+    //    //debug.h = 1;
+    //    //
+    //    //SDL_Rect debug_dest;
+    //    //debug_dest.x = planet.x;
+    //    //debug_dest.y = planet.y;
+    //    //
+    //    //debug_dest.h = render_scale * 2;
+    //    //debug_dest.w = render_scale * 2;
+    //    //SDL_RenderCopy(gRenderer, texture_atlas, &debug, &debug_dest);
+    //
+    //    SDL_RenderCopy(renderer, texture_atlas, &planet_atlas_rect, &render_rect);
+	//}
 }
 
 void Game::draw_players(SDL_Renderer* renderer)
 {
-	for (PlayerShip player : player_table)
-	{
-        auto player_atlas_rect = sprite_table[player.sprite_index];
-
-        SDL_Rect render_rect
-        {
-            player.x,
-            player.y,
-            player_atlas_rect.w * render_scale,
-            player_atlas_rect.h * render_scale
-        };
-
-        SDL_RenderCopy(renderer, texture_atlas, &player_atlas_rect, &render_rect);
-	}
+	//for (PlayerShip player : player_table)
+	//{
+    //    auto player_atlas_rect = sprite_table[player.sprite_index];
+    //
+    //    SDL_Rect render_rect
+    //    {
+    //        player.x,
+    //        player.y,
+    //        player_atlas_rect.w * render_scale,
+    //        player_atlas_rect.h * render_scale
+    //    };
+    //
+    //    SDL_RenderCopy(renderer, texture_atlas, &player_atlas_rect, &render_rect);
+	//}
 }
 
 void Game::Draw(float dt, SDL_Renderer* renderer)
 {
-    draw_planets(renderer);
-    draw_players(renderer);
+    //draw_planets(renderer);
+    //draw_players(renderer);
 }
 
 void Game::Update(float dt)

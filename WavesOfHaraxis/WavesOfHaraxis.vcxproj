@@ -24,11 +24,10 @@
     <ClCompile Include="TransparentWindow.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="data_table.h" />
+    <ClInclude Include="component_data.h" />
+    <ClInclude Include="ecs\ecs.h" />
     <ClInclude Include="Game.h" />
-    <ClInclude Include="json.hpp" />
     <ClInclude Include="TransparentWindow.h" />
-    <ClInclude Include="static_vector.hpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
@@ -83,11 +82,11 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IncludePath>Q:\gamedev\programming\vs_libs\SDL2-2.26.0\include;Q:\gamedev\programming\vs_libs\SDL2_image-2.6.2\include;$(IncludePath)</IncludePath>
+    <IncludePath>Q:\gamedev\programming\vs_libs\SDL2-2.26.0\include;Q:\gamedev\programming\vs_libs\SDL2_image-2.6.2\include;Q:\gamedev\programming\CPP\WavesOfHaraxis\WavesOfHaraxis\core;Q:\gamedev\programming\CPP\WavesOfHaraxis\WavesOfHaraxis\ecs;Q:\gamedev\programming\CPP\WavesOfHaraxis\WavesOfHaraxis\ext;$(IncludePath)</IncludePath>
     <LibraryPath>Q:\gamedev\programming\vs_libs\SDL2-2.26.0\lib\x64;Q:\gamedev\programming\vs_libs\SDL2_image-2.6.2\lib\x64;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <IncludePath>Q:\gamedev\programming\vs_libs\SDL2-2.26.0\include;Q:\gamedev\programming\vs_libs\SDL2_image-2.6.2\include;$(IncludePath)</IncludePath>
+    <IncludePath>Q:\gamedev\programming\vs_libs\SDL2-2.26.0\include;Q:\gamedev\programming\vs_libs\SDL2_image-2.6.2\include;Q:\gamedev\programming\CPP\WavesOfHaraxis\WavesOfHaraxis\core;Q:\gamedev\programming\CPP\WavesOfHaraxis\WavesOfHaraxis\ecs;Q:\gamedev\programming\CPP\WavesOfHaraxis\WavesOfHaraxis\ext;$(IncludePath)</IncludePath>
     <LibraryPath>Q:\gamedev\programming\vs_libs\SDL2-2.26.0\lib\x64;Q:\gamedev\programming\vs_libs\SDL2_image-2.6.2\lib\x64;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
