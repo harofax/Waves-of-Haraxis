@@ -1,6 +1,5 @@
 #include "Game.h"
 
-#include <bitset>
 
 #define PRINT(x) std::cout << (x) << std::endl
 
@@ -43,9 +42,9 @@ Game::Game(const char* window_name) : TransparentWindow(window_name)
         printf("Could not load config file properly");
 	}
 
-    init_stuff();
+    init_ecs();
     init_planets();
-    init_players();
+    //init_players();
 	
 }
 
@@ -150,32 +149,23 @@ bool Game::load_config()
 	return true;
 }
 
-void Game::init_stuff()
+void Game::init_ecs()
 {
-    int shift = 5;
+    //using namespace ecs;
+    // -- registering components --
+    world.register_component<ecs::SpriteComponent>();
+    world.register_component<ecs::TransformComponent>();
+    world.register_component<ecs::BoundsComponent>();
+    world.register_component<ecs::VelocityComponent>();
+    world.register_component<ecs::WeaponComponent>();
+    world.register_component<ecs::HealthComponent>();
+    world.register_component<ecs::DamagingComponent>();
 
-	std::bitset<8> one(1);
-    PRINT(one);
+    // -- reserve space for entities --
+    world.reserve(ENTITY_CAPACITY);
 
-    uint8_t mask = 1 << shift;
-    std::bitset<8> onemask(mask);
-    PRINT("ID LOOKS LIKE THIS:");
-    PRINT(onemask);
+    // -- register systems -- 
 
-    uint8_t unmask = 1 >> shift;
-    std::bitset<8> unmaskbit(unmask);
-    PRINT("REVERSE?? shift back:");
-    unsigned long index;
-    BitScanReverse(&index, mask);
-    PRINT(index);
-
-    for (int i = 0; i < 0; i++)
-    {
-	    const auto e = world.create_entity();
-
-    	PRINT("id: " );
-        PRINT(e.id);
-    }
 }
 
 void Game::init_planets()
@@ -205,10 +195,11 @@ void Game::init_planets()
             pos_y -= planet_rect.h * render_scale;
         }
 
-        auto e = world.create_entity();
+        const auto planet = world.create_entity();
 
-        const ecs::SpriteComponent planet_sprite = { sprite_index };
-        world.add_component<ecs::SpriteComponent>(e, planet_sprite);
+        world.add_component<ecs::SpriteComponent>(planet, sprite_index);
+        world.add_component<ecs::BoundsComponent>(planet, x_width, y_height);
+        world.add_component<ecs::TransformComponent>(planet, pos_x, pos_y);
 
         //Planet random_planet
         //{
@@ -219,8 +210,6 @@ void Game::init_planets()
         //
         //planet_table[i] = random_planet;
     }
-
-    world.print_components();
 }
 
 void Game::init_players()

@@ -29,13 +29,25 @@
     <ClInclude Include="Game.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ecs\ecs.h">
+    <ClInclude Include="ecs\components.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="core\TransparentWindow.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ecs_system.h">
+    <ClInclude Include="ecs\entity_pool.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ecs\entity.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ecs\component_table.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ecs\system.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ecs\world.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
