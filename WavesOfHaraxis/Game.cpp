@@ -152,7 +152,7 @@ bool Game::load_config()
 
 void Game::init_stuff()
 {
-    int shift = 2;
+    int shift = 5;
 
 	std::bitset<8> one(1);
     PRINT(one);
@@ -174,7 +174,7 @@ void Game::init_stuff()
 	    const auto e = world.create_entity();
 
     	PRINT("id: " );
-        PRINT(e);
+        PRINT(e.id);
     }
 }
 
@@ -205,6 +205,11 @@ void Game::init_planets()
             pos_y -= planet_rect.h * render_scale;
         }
 
+        auto e = world.create_entity();
+
+        const ecs::SpriteComponent planet_sprite = { sprite_index };
+        world.add_component<ecs::SpriteComponent>(e, planet_sprite);
+
         //Planet random_planet
         //{
         //    pos_x,
@@ -214,6 +219,8 @@ void Game::init_planets()
         //
         //planet_table[i] = random_planet;
     }
+
+    world.print_components();
 }
 
 void Game::init_players()

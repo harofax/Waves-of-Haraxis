@@ -35,5 +35,8 @@
     <ClInclude Include="core\TransparentWindow.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="ecs_system.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
