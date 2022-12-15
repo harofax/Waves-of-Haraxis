@@ -31,8 +31,6 @@ public:
 	//SDL_Texture* load_texture(std::string path);
 
 	virtual void Update(float dt) final;
-	void draw_planets(SDL_Renderer* renderer);
-	void draw_players(SDL_Renderer* renderer);
 	virtual void Draw(float dt, SDL_Renderer* renderer) final;
 
 private:

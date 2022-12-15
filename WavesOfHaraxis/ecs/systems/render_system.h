@@ -21,17 +21,16 @@ namespace ecs
 				this->atlas_texture = atlas;
 				this->atlas_lookup = atlas_lookup_table;
 
-				set_signature<SpriteComponent, TransformComponent, BoundsComponent>();
+				set_signature<Sprite, Position, Bounds>();
 			}
 
 			void run(float dt) override
 			{
-				const auto& drawable_entities = this->get_managed_entities();
-
-				for (const auto& entity : drawable_entities)
+				printf("RENDER: num entities: %llu\n", get_managed_entities().size());
+				for (const auto& entity  : get_managed_entities())
 				{
 					auto [sprite, transform, bounds] =
-						world_context.get_components<ecs::SpriteComponent, ecs::TransformComponent, ecs::BoundsComponent>(entity);
+						world_context.get_components<ecs::Sprite, ecs::Position, ecs::Bounds>(entity);
 
 					auto atlas_rect = atlas_lookup[sprite.sprite_index];
 

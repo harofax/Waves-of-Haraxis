@@ -1,5 +1,7 @@
 #include "Game.h"
 
+#include "systems/apply_velocity_system.h"
+#include "systems/input_system.h"
 #include "systems/render_system.h"
 
 
@@ -46,6 +48,7 @@ Game::Game(const char* window_name) : TransparentWindow(window_name)
 
     init_ecs();
     init_planets();
+    init_players();
     //init_players();
 	
 }
@@ -163,15 +166,19 @@ void Game::init_ecs()
     world.reserve(ecs::ENTITY_CAPACITY);
 
 	// -- registering components --
-    world.register_component<ecs::SpriteComponent>();
-    world.register_component<ecs::TransformComponent>();
-    world.register_component<ecs::BoundsComponent>();
-    world.register_component<ecs::VelocityComponent>();
-    world.register_component<ecs::WeaponComponent>();
-    world.register_component<ecs::HealthComponent>();
-    world.register_component<ecs::DamagingComponent>();
+    world.register_component<ecs::Sprite>();
+    world.register_component<ecs::Position>();
+    world.register_component<ecs::Bounds>();
+    world.register_component<ecs::Velocity>();
+    world.register_component<ecs::Weapon>();
+    world.register_component<ecs::Health>();
+    world.register_component<ecs::Damaging>();
 
     // -- create and register systems --
+    world.create_system<ecs::systems::input_system>(world, keyboard);
+
+    world.create_system<ecs::systems::apply_velocity_system>(world);
+
     world.create_system<ecs::systems::render_system>(world, renderer, texture_atlas, sprite_table);
 
     
@@ -210,18 +217,10 @@ void Game::init_planets()
 
         const auto planet = world.create_entity();
 
-        world.add_component<ecs::SpriteComponent>(planet, sprite_index);
-        world.add_component<ecs::BoundsComponent>(planet, bounds_w, bounds_h);
-        world.add_component<ecs::TransformComponent>(planet, pos_x, pos_y);
+        world.add_component<ecs::Sprite>(planet, sprite_index);
+        world.add_component<ecs::Bounds>(planet, bounds_w, bounds_h);
+        world.add_component<ecs::Position>(planet, pos_x, pos_y);
 
-        //Planet random_planet
-        //{
-        //    pos_x,
-        //    pos_y,
-        //    sprite_index
-        //};
-        //
-        //planet_table[i] = random_planet;
     }
 }
 
@@ -234,12 +233,16 @@ void Game::init_players()
     {
         int pos_x = x_pos_dist(generator);
         int pos_y = y_pos_dist(generator);
-        int sprite_index = spriteRangeTable[PLANET_SPRITE_RANGE_INDEX] + 2;
 
-        auto& rect = sprite_table[sprite_index];
+    	const int sprite_index = spriteRangeTable[PLANET_SPRITE_RANGE_INDEX] + 2;
 
-        int x_width = pos_x + rect.w * render_scale;
-        int y_height = pos_y + rect.h * render_scale;
+        const auto& rect = sprite_table[sprite_index];
+
+        const int bounds_w = rect.w * render_scale;
+        const int bounds_h = rect.h * render_scale;
+
+        const int x_width = pos_x + bounds_w;
+        const int y_height = pos_y + bounds_h;
 
         if (x_width > desktopWidth)
         {
@@ -250,6 +253,12 @@ void Game::init_players()
             pos_y -= rect.h * render_scale;
         }
 
+        const auto player = world.create_entity();
+
+        world.add_component<ecs::Sprite>(player, sprite_index);
+        world.add_component<ecs::Bounds>(player, bounds_w, bounds_h);
+        world.add_component<ecs::Position>(player, pos_x, pos_y);
+
         //PlayerShip player
         //{
         //    pos_x,
@@ -259,7 +268,6 @@ void Game::init_players()
         //printf("player#%d intialized, pos: (%d, %d)\n", i, pos_x, pos_y);
         //player_table[i] = player;
     }
-
 }
 
 void Game::init_enemies()

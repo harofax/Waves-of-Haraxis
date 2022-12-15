@@ -56,5 +56,14 @@
     <ClInclude Include="ecs\systems\ecs_config.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="ecs\systems\input_system.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="core\keyboard_state.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ecs\systems\apply_velocity_system.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

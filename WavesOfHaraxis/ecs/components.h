@@ -4,65 +4,63 @@
 namespace ecs
 {
     // ---- components ----
-
-    enum class ComponentType
+    template<typename T>
+    class Component
     {
-        Transform,
-	    Sprite,
-        Bounds,
-        Velocity,
-        Health,
-        Weapon,
-        Damaging,
-
+    public:
+        static const std::size_t component_id;
     };
 
-    template<typename T, auto ID>
-    struct Component
+    inline std::size_t generate_component_id()
     {
-        static constexpr auto component_id = static_cast<std::size_t>(ID);
-    };
+        static auto counter = static_cast<std::size_t>(0);
+        printf("next id: %llu\n", counter);
+        return counter++;
+    }
 
-    struct SpriteComponent : public Component<SpriteComponent, ComponentType::Sprite>
+    template<typename T>
+    const std::size_t Component<T>::component_id = generate_component_id();
+
+    struct Sprite : public Component<Sprite>
     {
-	    explicit SpriteComponent(int spr_id) : sprite_index(spr_id) {}
+	    explicit Sprite(int spr_id) : sprite_index(spr_id) {}
 	    int sprite_index = -1;
     };
 
-    struct BoundsComponent : public Component<BoundsComponent, ComponentType::Bounds>
+    struct Bounds : public Component<Bounds>
     {
-        BoundsComponent(int W, int H) : w(W), h(H) {}
-        int w;
-        int h;
+        Bounds(float width, float height) : w(width), h(height) {}
+        float w;
+        float h;
     };
 
-    struct TransformComponent : public Component<TransformComponent, ComponentType::Transform>
+    struct Position : public Component<Position>
     {
-	    TransformComponent(int x, int y)
+	    Position(float x, float y)
 		    : x(x),
 		      y(y)
 	    {
 	    }
 
-	    int x;
-        int y;
+	    float x;
+        float y;
     };
 
-    struct VelocityComponent : public Component<VelocityComponent, ComponentType::Velocity>
+    struct Velocity : public Component<Velocity>
     {
-	    VelocityComponent(int x_vel, int y_vel)
+	    Velocity(float x_vel, float y_vel)
 		    : x_vel(x_vel),
 		      y_vel(y_vel)
 	    {
 	    }
 
-	    int x_vel;
-        int y_vel;
+	    float x_vel;
+        float y_vel;
     };
 
-    struct HealthComponent : public Component<HealthComponent, ComponentType::Health>
+    struct Health : public Component<Health>
     {
-	    explicit HealthComponent(int health)
+	    explicit Health(int health)
 		    : health(health)
 	    {
 	    }
@@ -70,9 +68,9 @@ namespace ecs
 	    int health;
     };
 
-    struct WeaponComponent : public Component<WeaponComponent, ComponentType::Weapon>
+    struct Weapon : public Component<Weapon>
     {
-	    WeaponComponent(int damage, bool shoot_up)
+	    Weapon(int damage, bool shoot_up)
 		    : damage(damage),
 		      shoot_up(shoot_up)
 	    {
@@ -83,14 +81,18 @@ namespace ecs
         bool shoot_up;
     };
 
-    struct DamagingComponent : public Component<DamagingComponent, ComponentType::Damaging>
+    struct Damaging : public Component<Damaging>
     {
-	    explicit DamagingComponent(int damage)
+	    explicit Damaging(int damage)
 		    : damage(damage)
 	    {
 	    }
 
 	    int damage;
+    };
+
+    struct PlayerInput : public Component<PlayerInput>
+    {
     };
 
 }

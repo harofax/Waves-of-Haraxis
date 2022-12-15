@@ -35,13 +35,8 @@ void TransparentWindow::Run()
 
 	while (is_running)
 	{
-		//SDL_PumpEvents();
-		//UpdateKeys();
-		while(SDL_PollEvent(&event) != 0)
-		{
-			handle_keyboard_input(&event);
-			handle_mouse_input(&event);
-		}
+		SDL_PumpEvents();
+		keyboard.UpdateKeys();
 
 		// tick stuff
 		{
@@ -50,8 +45,6 @@ void TransparentWindow::Run()
 			dt = static_cast<float>(diff) / 1000.0f;
 			tick = new_tick;
 		}
-
-		
 
 		// clear to magenta (our color key -> transparent)
 		SDL_SetRenderDrawColor(renderer, 255, 0, 255, 255);
@@ -69,7 +62,7 @@ void TransparentWindow::Quit()
 	is_running = false;
 }
 
-SDL_Texture* TransparentWindow::load_texture(const char* path)
+SDL_Texture* TransparentWindow::load_texture(const char* path) const
 {
 	// output texture
 	SDL_Texture* output_texture = nullptr;
@@ -95,27 +88,6 @@ SDL_Texture* TransparentWindow::load_texture(const char* path)
 }
 
 
-void TransparentWindow::handle_keyboard_input(SDL_Event* e)
-{
-	if (e->type == SDL_QUIT)
-	{
-		is_running = false;
-	}
-	if (e->type == SDL_KEYDOWN)
-	{
-		switch (e->key.keysym.sym)
-		{
-		case SDLK_ESCAPE:
-			is_running = false;
-			break;
-		}
-	}
-}
-
-void TransparentWindow::handle_mouse_input(SDL_Event* e)
-{
-	// mouse input
-}
 
 bool TransparentWindow::init(const char* window_name)
 {

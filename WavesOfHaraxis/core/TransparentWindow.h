@@ -4,6 +4,8 @@
 #include <iostream>
 #include <SDL_image.h>
 
+#include "keyboard_state.h"
+
 class TransparentWindow
 {
 public:
@@ -19,19 +21,20 @@ public:
 	virtual void Update(float dt) = 0;
 	virtual void Draw(float dt, SDL_Renderer* renderer) = 0;
 
-	SDL_Texture* load_texture(const char* path);
+	SDL_Texture* load_texture(const char* path) const;
 
 	// Get resolution of primary monitor
 	const int desktopWidth = GetSystemMetrics(SM_CXSCREEN);
 	const int desktopHeight = GetSystemMetrics(SM_CYSCREEN);
 
-	void handle_keyboard_input(SDL_Event* e);
-	void handle_mouse_input(SDL_Event* e);
 	SDL_Renderer* renderer = nullptr;
+
+	keyboard_state keyboard{};
+
 
 private:
 	bool init(const char* window_name);
-	//void UpdateKeys();
+	
 
 	bool make_window_transparent(COLORREF colorKey) const;
 
