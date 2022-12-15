@@ -1,7 +1,6 @@
 #pragma once
 #include <vector>
 #include <bitset>
-#include <unordered_map>
 #include "entity.h"
 
 namespace ecs
@@ -10,27 +9,33 @@ namespace ecs
 	{
 	public:
 		virtual ~base_component_table() = default;
-	
+
 		virtual void reserve(std::size_t size) = 0;
 		virtual bool try_remove(entity entity) = 0;
 	};
-	
+
 	template<typename T, std::size_t ComponentCapacity, std::size_t SystemCapacity>
 	class component_table : public base_component_table
 	{
 	public:
-		component_table(std::vector<std::bitset<ComponentCapacity>>& entity_signatures) :
-			entity_signatures(entity_signatures)
+		component_table(std::vector<entity_index>& ent_to_component,
+			std::vector<std::bitset<ComponentCapacity>>& ent_signatures) :
+			entity_to_component(ent_to_component), entity_signatures(ent_signatures)
 		{
+
 		}
-	
+		//component_table(std::vector<std::bitset<ComponentCapacity>>& entity_signatures) :
+		//	entity_signatures(entity_signatures)
+		//{
+		//}
+
 		virtual void reserve(std::size_t size) override
 		{
 			component_to_entity.reserve(size);
 			component_to_entity.reserve(size);
-			entity_to_component.reserve(size);
+			//entity_to_component.reserve(size);
 		}
-	
+
 		T& get(entity entity)
 		{
 			return components[entity_to_component[entity]];
@@ -38,7 +43,7 @@ namespace ecs
 
 		const T& get(entity entity) const
 		{
-			return components[entity_to_component.find(entity)->second];
+			return components[entity_to_component[entity]];
 		}
 
 		template<typename... Args>
@@ -64,7 +69,7 @@ namespace ecs
 
 			// update entity_to_component map
 			entity_to_component[component_to_entity.back()] = index;
-			entity_to_component.erase(entity);
+			//entity_to_component.erase(entity);
 
 			// update component_to_entity table
 			component_to_entity[index] = component_to_entity.back();
@@ -94,7 +99,7 @@ namespace ecs
 	private:
 		std::vector<T> components;
 		std::vector<entity> component_to_entity;
-		std::unordered_map<entity, entity_index> entity_to_component;
+		std::vector<entity_index>& entity_to_component;
 		std::vector<std::bitset<ComponentCapacity>>& entity_signatures;
 	};
 }

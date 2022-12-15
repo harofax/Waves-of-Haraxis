@@ -14,7 +14,6 @@ namespace ecs
     inline std::size_t generate_component_id()
     {
         static auto counter = static_cast<std::size_t>(0);
-        printf("next id: %llu\n", counter);
         return counter++;
     }
 
@@ -93,6 +92,11 @@ namespace ecs
 
     struct PlayerInput : public Component<PlayerInput>
     {
+	    PlayerInput(bool can_move) : can_move(can_move)
+	    {
+	    }
+
+	    bool can_move;
     };
 
 }

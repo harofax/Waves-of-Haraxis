@@ -3,7 +3,7 @@
 #include "SDL_render.h"
 #include "world.h"
 #include "components.h"
-#include "ecs_config.h"
+#include "core/game_config.h"
 
 #define PRINT(x) std::cout << (x) << std::endl
 
@@ -26,7 +26,6 @@ namespace ecs
 
 			void run(float dt) override
 			{
-				printf("RENDER: num entities: %llu\n", get_managed_entities().size());
 				for (const auto& entity  : get_managed_entities())
 				{
 					auto [sprite, transform, bounds] =

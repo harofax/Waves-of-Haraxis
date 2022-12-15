@@ -2,7 +2,7 @@
 #include "system.h"
 #include "world.h"
 #include "components.h"
-#include "ecs_config.h"
+#include "core/game_config.h"
 #include "keyboard_state.h"
 
 
@@ -21,9 +21,8 @@ namespace ecs
 
 			void run(float dt) override
 			{
-				printf("INPUT: num entities: %llu\n", get_managed_entities().size());
-				int x_dir = 0;
-				int y_dir = 0;
+				float x_dir = 0;
+				float y_dir = 0;
 
 				bool moved = false;
 
@@ -39,23 +38,21 @@ namespace ecs
 				}
 				if (input.is_key_down(SDL_SCANCODE_W))
 				{
-					y_dir = 1;
+					y_dir = -1;
 					moved = true;
 				}
 				if (input.is_key_down(SDL_SCANCODE_S))
 				{
-					y_dir = -1;
+					y_dir = 1;
 					moved = true;
 				}
 
 				if (moved)
 				{
-					printf("MOVED!!\n");
-					
 					for (auto& entity : get_managed_entities())
 					{
-						printf("adding velocity component to #%d !!!!!!!\n", entity);
-						world_context.add_component<Velocity>(entity, x_dir, y_dir);
+						auto& player_input = world_context.get_component<PlayerInput>(entity);
+						world_context.add_component<Velocity>(entity, x_dir * (player_speed * dt), y_dir * (player_speed * dt));
 					}
 				}
 			}

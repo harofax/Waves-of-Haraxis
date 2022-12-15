@@ -173,6 +173,7 @@ void Game::init_ecs()
     world.register_component<ecs::Weapon>();
     world.register_component<ecs::Health>();
     world.register_component<ecs::Damaging>();
+    world.register_component<ecs::PlayerInput>();
 
     // -- create and register systems --
     world.create_system<ecs::systems::input_system>(world, keyboard);
@@ -187,8 +188,8 @@ void Game::init_ecs()
 
 void Game::init_planets()
 {
-    std::uniform_int_distribution<> x_pos_dist(0, desktopWidth);
-    std::uniform_int_distribution<> y_pos_dist(0, desktopHeight);
+    std::uniform_int_distribution<> x_pos_dist(0, desktop_width);
+    std::uniform_int_distribution<> y_pos_dist(0, desktop_height);
 
     std::uniform_int_distribution<> sprite_dist(0, spriteRangeTable[PLANET_SPRITE_RANGE_INDEX]);
 
@@ -206,11 +207,11 @@ void Game::init_planets()
         int x_width = pos_x + bounds_w;
         int y_height = pos_y + bounds_h;
 
-        if (x_width > desktopWidth)
+        if (x_width > desktop_width)
         {
             pos_x -= planet_rect.w * render_scale;
         }
-        if (y_height > desktopHeight)
+        if (y_height > desktop_height)
         {
             pos_y -= planet_rect.h * render_scale;
         }
@@ -226,8 +227,8 @@ void Game::init_planets()
 
 void Game::init_players()
 {
-    std::uniform_int_distribution<> x_pos_dist(0, desktopWidth);
-    std::uniform_int_distribution<> y_pos_dist(desktopHeight / 2, desktopHeight);
+    std::uniform_int_distribution<> x_pos_dist(0, desktop_width);
+    std::uniform_int_distribution<> y_pos_dist(desktop_height / 2, desktop_height);
 
     for (int i = 0; i < num_player_ships; i++)
     {
@@ -244,20 +245,21 @@ void Game::init_players()
         const int x_width = pos_x + bounds_w;
         const int y_height = pos_y + bounds_h;
 
-        if (x_width > desktopWidth)
+        if (x_width > desktop_width)
         {
             pos_x -= rect.w * render_scale;
         }
-        if (y_height > desktopHeight)
+        if (y_height > desktop_height)
         {
             pos_y -= rect.h * render_scale;
         }
 
-        const auto player = world.create_entity();
+        const auto& player = world.create_entity();
 
         world.add_component<ecs::Sprite>(player, sprite_index);
         world.add_component<ecs::Bounds>(player, bounds_w, bounds_h);
         world.add_component<ecs::Position>(player, pos_x, pos_y);
+        world.add_component<ecs::PlayerInput>(player, true);
 
         //PlayerShip player
         //{
@@ -272,8 +274,8 @@ void Game::init_players()
 
 void Game::init_enemies()
 {
-    std::uniform_int_distribution<> x_pos_dist(0, desktopWidth);
-    std::uniform_int_distribution<> y_pos_dist(0, desktopHeight);
+    std::uniform_int_distribution<> x_pos_dist(0, desktop_width);
+    std::uniform_int_distribution<> y_pos_dist(0, desktop_height);
 }
 
 

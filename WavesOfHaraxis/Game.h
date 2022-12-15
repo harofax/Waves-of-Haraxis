@@ -5,7 +5,7 @@
 #include <fstream>
 #include "world.h"
 #include "components.h"
-#include "systems/ecs_config.h"
+#include "core/game_config.h"
 
 
 using json = nlohmann::json;

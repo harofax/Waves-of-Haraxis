@@ -1,8 +1,8 @@
 #pragma once
-#include "system.h"
-#include "ecs_config.h"
-#include "world.h"
 #include "components.h"
+#include "system.h"
+#include "world.h"
+#include "core/game_config.h"
 
 namespace ecs
 {
@@ -14,20 +14,33 @@ namespace ecs
 
 			apply_velocity_system(ecs::world<COMPONENT_CAPACITY, SYSTEM_CAPACITY>& context) : system(context)
 			{
-				set_signature<Position, Velocity>();
+				set_signature<Position, Velocity, Bounds>();
 			}
 
 			void run(float dt) override
 			{
-				printf("VELOCITY: num entities: %llu\n", get_managed_entities().size());
 				for (const auto& entity : get_managed_entities())
 				{
-					auto [transform, velocity] = world_context.get_components<Position, Velocity>(entity);
+					auto [pos, velocity, bounds] = world_context.get_components<Position, Velocity, Bounds>(entity);
 
-					transform.x += velocity.x_vel * dt;
-					transform.y += velocity.y_vel * dt;
 
-					world_context.get_component<Position>(entity) = transform;
+					pos.x += velocity.x_vel;
+					pos.y += velocity.y_vel;
+
+					if (pos.x > desktop_width)
+						pos.x = 0;
+
+					if (pos.y > desktop_height)
+						pos.y = 0;
+
+					// (included 0 for clarity)
+					if (pos.x < 0 - bounds.w)
+						pos.x = desktop_width;
+
+					if (pos.y < 0 - bounds.h)
+						pos.y = desktop_height;
+
+					world_context.remove_component<Velocity>(entity);
 				}
 			}
 

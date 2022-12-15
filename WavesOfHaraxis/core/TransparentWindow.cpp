@@ -25,8 +25,8 @@ TransparentWindow::TransparentWindow(const char* name)
 
 void TransparentWindow::Run()
 {
-	auto tick = SDL_GetTicks64();
-	auto dt = 0.0f;
+	Uint64 previous_tick = SDL_GetPerformanceCounter();
+	float dt = 0.0f;
 
 	is_running = true;
 
@@ -39,12 +39,12 @@ void TransparentWindow::Run()
 		keyboard.UpdateKeys();
 
 		// tick stuff
-		{
-			const auto new_tick = SDL_GetTicks64();
-			const auto diff = new_tick - tick;
-			dt = static_cast<float>(diff) / 1000.0f;
-			tick = new_tick;
-		}
+		
+			const Uint64 new_tick = SDL_GetPerformanceCounter();
+			const Uint64 diff = new_tick - previous_tick;
+			dt = static_cast<float>(diff) / static_cast<float>(SDL_GetPerformanceFrequency());
+			previous_tick = new_tick;
+		
 
 		// clear to magenta (our color key -> transparent)
 		SDL_SetRenderDrawColor(renderer, 255, 0, 255, 255);
@@ -102,7 +102,7 @@ bool TransparentWindow::init(const char* window_name)
 	{
 		window = SDL_CreateWindow(window_name,
 			0, 0,
-			desktopWidth, desktopHeight, SDL_WINDOW_BORDERLESS);
+			desktop_width, desktop_height, SDL_WINDOW_BORDERLESS);
 
 		if (window == nullptr)
 		{

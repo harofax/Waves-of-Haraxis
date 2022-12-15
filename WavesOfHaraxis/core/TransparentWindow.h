@@ -3,8 +3,10 @@
 #include <SDL_syswm.h>
 #include <iostream>
 #include <SDL_image.h>
-
 #include "keyboard_state.h"
+#include "game_config.h"
+
+
 
 class TransparentWindow
 {
@@ -22,10 +24,6 @@ public:
 	virtual void Draw(float dt, SDL_Renderer* renderer) = 0;
 
 	SDL_Texture* load_texture(const char* path) const;
-
-	// Get resolution of primary monitor
-	const int desktopWidth = GetSystemMetrics(SM_CXSCREEN);
-	const int desktopHeight = GetSystemMetrics(SM_CYSCREEN);
 
 	SDL_Renderer* renderer = nullptr;
 

@@ -24,6 +24,7 @@
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="core\game_config.h" />
     <ClInclude Include="core\keyboard_state.h" />
     <ClInclude Include="core\TransparentWindow.h" />
     <ClInclude Include="ecs\component_table.h" />
@@ -32,7 +33,6 @@
     <ClInclude Include="ecs\entity_pool.h" />
     <ClInclude Include="ecs\system.h" />
     <ClInclude Include="ecs\systems\apply_velocity_system.h" />
-    <ClInclude Include="ecs\systems\ecs_config.h" />
     <ClInclude Include="ecs\systems\input_system.h" />
     <ClInclude Include="ecs\systems\render_system.h" />
     <ClInclude Include="ecs\world.h" />
