@@ -47,12 +47,12 @@ void TransparentWindow::Run()
 		}
 
 		// tick stuff
-		
+		{
 			const Uint64 new_tick = SDL_GetPerformanceCounter();
 			const Uint64 diff = new_tick - previous_tick;
 			dt = static_cast<float>(diff) / static_cast<float>(SDL_GetPerformanceFrequency());
 			previous_tick = new_tick;
-		
+		}
 
 		// clear to magenta (our color key -> transparent)
 		SDL_SetRenderDrawColor(renderer, 255, 0, 255, 255);

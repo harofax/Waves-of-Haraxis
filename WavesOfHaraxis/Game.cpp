@@ -28,10 +28,11 @@ SDL_Rect sprite_table[16];
 
 
 // 0 -> planet, 1 -> player, 2 -> enemy
-const int PLANET_SPRITE_RANGE_INDEX = 0;
-const int PLAYER_SPRITE_RANGE_INDEX = 1;
-const int ENEMY_SPRITE_RANGE_INDEX = 2;
-int spriteRangeTable[3];
+constexpr int PLANET_SPRITE_RANGE_INDEX = 0;
+constexpr int PLAYER_SPRITE_RANGE_INDEX = 1;
+constexpr int ENEMY_SPRITE_RANGE_INDEX = 2;
+constexpr int BULLET_SPRITE_INDEX = 3;
+int sprite_range_table[4];
 
 Game::Game(const char* window_name) : TransparentWindow(window_name)
 {
@@ -79,7 +80,7 @@ void parse_json_data(json::const_reference data)
         sprite_table[sprite_index] = planet_rect;
         sprite_index++;
     }
-    spriteRangeTable[PLANET_SPRITE_RANGE_INDEX] = sprite_index - 1;
+    sprite_range_table[PLANET_SPRITE_RANGE_INDEX] = sprite_index - 1;
 
     const auto& player_json = data["sprites"]["player"];
 
@@ -96,7 +97,7 @@ void parse_json_data(json::const_reference data)
         sprite_table[sprite_index] = player_rect;
         sprite_index++;
     }
-    spriteRangeTable[PLAYER_SPRITE_RANGE_INDEX] = sprite_index - 1;
+    sprite_range_table[PLAYER_SPRITE_RANGE_INDEX] = sprite_index - 1;
 
     const auto& enemy_json = data["sprites"]["enemy"];
 
@@ -114,7 +115,21 @@ void parse_json_data(json::const_reference data)
     	sprite_index++;
     }
 
-    spriteRangeTable[ENEMY_SPRITE_RANGE_INDEX] = sprite_index - 1;
+    sprite_range_table[ENEMY_SPRITE_RANGE_INDEX] = sprite_index - 1;
+
+    const auto& bullet_json = data["sprites"]["bullet"];
+
+    const SDL_Rect bullet_rect
+	{
+		bullet_json["rect"]["x"],
+        bullet_json["rect"]["y"],
+        bullet_json["rect"]["w"],
+        bullet_json["rect"]["h"]
+    };
+    sprite_table[sprite_index] = bullet_rect;
+    sprite_range_table[BULLET_SPRITE_INDEX] = sprite_index;
+
+
 }
 
 bool load_json_data(const char* json_path, json& data_out)
@@ -174,13 +189,14 @@ void Game::init_ecs()
     world.register_component<ecs::Health>();
     world.register_component<ecs::Damaging>();
     world.register_component<ecs::PlayerInput>();
+    // todo: collider? maybe just use bounds
+
 
     // -- create and register systems --
     world.create_system<ecs::systems::input_system>(world, keyboard);
-
     world.create_system<ecs::systems::apply_velocity_system>(world);
-
     world.create_system<ecs::systems::render_system>(world, renderer, texture_atlas, sprite_table);
+    // todo: shooting system
 
     
 
@@ -191,7 +207,7 @@ void Game::init_planets()
     std::uniform_int_distribution<> x_pos_dist(0, desktop_width);
     std::uniform_int_distribution<> y_pos_dist(0, desktop_height);
 
-    std::uniform_int_distribution<> sprite_dist(0, spriteRangeTable[PLANET_SPRITE_RANGE_INDEX]);
+    std::uniform_int_distribution<> sprite_dist(0, sprite_range_table[PLANET_SPRITE_RANGE_INDEX]);
 
     for (int i = 0; i < num_background_planets; i++)
     {
@@ -235,7 +251,7 @@ void Game::init_players()
         int pos_x = x_pos_dist(generator);
         int pos_y = y_pos_dist(generator);
 
-    	const int sprite_index = spriteRangeTable[PLANET_SPRITE_RANGE_INDEX] + 2;
+    	const int sprite_index = sprite_range_table[PLANET_SPRITE_RANGE_INDEX] + 2;
 
         const auto& rect = sprite_table[sprite_index];
 
