@@ -1,9 +1,9 @@
 #pragma once
-#include "system.h"
-#include "SDL_render.h"
-#include "world.h"
 #include "components.h"
-#include "core/game_config.h"
+#include "SDL_render.h"
+#include "system.h"
+#include "world.h"
+#include <game_config.h>
 
 #define PRINT(x) std::cout << (x) << std::endl
 

@@ -28,17 +28,12 @@ namespace ecs
 					pos.y += velocity.y_vel;
 
 					if (pos.x > desktop_width)
-						pos.x = 0;
-
-					if (pos.y > desktop_height)
-						pos.y = 0;
+						pos.x = 0 - bounds.w;
 
 					// (included 0 for clarity)
-					if (pos.x < 0 - bounds.w)
+					else if (pos.x < 0 - bounds.w)
 						pos.x = desktop_width;
 
-					if (pos.y < 0 - bounds.h)
-						pos.y = desktop_height;
 
 					world_context.remove_component<Velocity>(entity);
 				}

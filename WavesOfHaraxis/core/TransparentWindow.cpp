@@ -35,8 +35,16 @@ void TransparentWindow::Run()
 
 	while (is_running)
 	{
+
+		
+
 		SDL_PumpEvents();
 		keyboard.UpdateKeys();
+
+		if (keyboard.is_key_pressed(SDL_SCANCODE_ESCAPE))
+		{
+			is_running = false;
+		}
 
 		// tick stuff
 		
