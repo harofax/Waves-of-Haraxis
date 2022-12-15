@@ -1,9 +1,9 @@
 #pragma once
 
 #include <memory>
-#include "ecs/entity_pool.h"
-#include "ecs/component_table.h"
-#include "ecs/system.h"
+#include "component_table.h"
+#include "entity_pool.h"
+#include "system.h"
 
 namespace ecs
 {
@@ -26,8 +26,10 @@ namespace ecs
 		T* create_system(Args&& ...args)
 		{
 			auto type = systems.size();
+
 			auto& system = systems.emplace_back(std::make_unique<T>(std::forward<Args>(args)...));
-			system->init(type);
+			//system->init(type);
+
 			return static_cast<T*>(system.get());
 		}
 
@@ -47,7 +49,32 @@ namespace ecs
 		{
 			return entities.create_entity();
 		}
-		void remove_entity();
+
+		void remove_entity(entity r_entity)
+		{
+			for (auto i = size_t(0); i < ComponentCapacity; ++i)
+			{
+				if (components_data[i])
+				{
+					components_data[i]->try_remove(r_entity);
+				}
+
+				for (auto& system : systems)
+				{
+					system->on_entity_removed(r_entity);
+				}
+
+				entities.remove(r_entity);
+			}
+		}
+
+		void run_systems(float dt)
+		{
+			for (auto& system : systems)
+			{
+				system->run(dt);
+			}
+		}
 
 		template<typename T>
 		bool has_component(entity entity) const
@@ -128,9 +155,11 @@ namespace ecs
 		}
 
 	private:
-		std::array<std::unique_ptr<base_component_table>, ComponentCapacity> components_data;
-		entity_pool<ComponentCapacity, SystemCapacity> entities;
-		std::vector<std::unique_ptr<system<ComponentCapacity, SystemCapacity>>> systems;
+		std::array<std::unique_ptr<base_component_table>, ComponentCapacity> components_data{};
+		entity_pool<ComponentCapacity, SystemCapacity> entities{};
+		std::vector<std::unique_ptr<system<ComponentCapacity, SystemCapacity>>> systems{};
+
+
 
 		template<typename T>
 		void check_component_type() const

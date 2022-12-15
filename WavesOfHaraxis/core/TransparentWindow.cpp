@@ -51,13 +51,14 @@ void TransparentWindow::Run()
 			tick = new_tick;
 		}
 
-		Update(dt);
+		
 
 		// clear to magenta (our color key -> transparent)
 		SDL_SetRenderDrawColor(renderer, 255, 0, 255, 255);
 		SDL_RenderClear(renderer);
 
-		Draw(dt, renderer);
+		Update(dt);
+		//Draw(dt, renderer);
 
 		SDL_RenderPresent(renderer);
 	}

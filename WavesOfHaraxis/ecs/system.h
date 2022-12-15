@@ -2,11 +2,10 @@
 #include <bitset>
 #include <unordered_map>
 #include <vector>
-#include "ecs/entity.h"
+#include "entity.h"
 
 namespace ecs
 {
-
 	template<std::size_t ComponentCapacity, std::size_t SystemCapacity>
 	class world;
 
@@ -14,7 +13,11 @@ namespace ecs
 	class system
 	{
 	public:
+		system(world<ComponentCapacity, SystemCapacity>& context) : world_context(context) {}
 		virtual ~system() = default;
+
+		virtual void run(float dt) = 0;
+
 
 	protected:
 		template<typename ...Ts>
@@ -23,26 +26,22 @@ namespace ecs
 			(signature.set(Ts::component_id), ...);
 		}
 
-		const std::vector<entity>& get_managed_entities() const
+		[[nodiscard]] const std::vector<entity>& get_managed_entities() const
 		{
 			return managed_entities;
 		}
 
-		virtual void on_managed_entity_added([[maybe_unused]] entity entity){};
-		virtual void on_managed_entity_removed([[maybe_unused]] entity entity){};
+		world<ComponentCapacity, SystemCapacity>& world_context;
+
+		virtual void on_managed_entity_added([[maybe_unused]] entity entity){}
+		virtual void on_managed_entity_removed([[maybe_unused]] entity entity){}
 
 	private:
-		friend world<ComponentCapacity, SystemCapacity>;
+		friend ecs::world<ComponentCapacity, SystemCapacity>;
 
 		std::bitset<ComponentCapacity> signature;
-		std::size_t type;
 		std::vector<entity> managed_entities;
 		std::unordered_map<entity, entity_index> entity_to_managed_entity;
-
-		void init(std::size_t set_type)
-		{
-			type = set_type;
-		}
 
 		// check if entity is still relevant to current system
 		void on_entity_updated(entity entity, const std::bitset<ComponentCapacity>& components)

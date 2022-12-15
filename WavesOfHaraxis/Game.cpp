@@ -1,5 +1,7 @@
 #include "Game.h"
 
+#include "systems/render_system.h"
+
 
 #define PRINT(x) std::cout << (x) << std::endl
 
@@ -59,45 +61,51 @@ void parse_json_data(json::const_reference data)
 
     int sprite_index = 0;
 
-    const auto planet_json = data["sprites"]["planets"];
+    const auto& planet_json = data["sprites"]["planets"];
 
-    for (auto planet_sprite : planet_json)
+    for (auto& planet_sprite : planet_json)
     {
-        SDL_Rect planet_rect;
-        planet_rect.x = planet_sprite["rect"]["x"];
-        planet_rect.y = planet_sprite["rect"]["y"];
-        planet_rect.w = planet_sprite["rect"]["w"];
-        planet_rect.h = planet_sprite["rect"]["h"];
+	    const SDL_Rect planet_rect
+    	{
+            planet_sprite["rect"]["x"],
+            planet_sprite["rect"]["y"],
+            planet_sprite["rect"]["w"],
+            planet_sprite["rect"]["h"]
+        };
 
         sprite_table[sprite_index] = planet_rect;
         sprite_index++;
     }
     spriteRangeTable[PLANET_SPRITE_RANGE_INDEX] = sprite_index - 1;
 
-    const auto player_json = data["sprites"]["player"];
+    const auto& player_json = data["sprites"]["player"];
 
-    for (auto player_sprite : player_json)
+    for (auto& player_sprite : player_json)
     {
-        SDL_Rect player_rect;
-        player_rect.x = player_sprite["rect"]["x"];
-        player_rect.y = player_sprite["rect"]["y"];
-        player_rect.w = player_sprite["rect"]["w"];
-        player_rect.h = player_sprite["rect"]["h"];
+	    const SDL_Rect player_rect
+    	{
+            player_sprite["rect"]["x"],
+            player_sprite["rect"]["y"],
+            player_sprite["rect"]["w"],
+            player_sprite["rect"]["h"]
+    	};
 
         sprite_table[sprite_index] = player_rect;
         sprite_index++;
     }
     spriteRangeTable[PLAYER_SPRITE_RANGE_INDEX] = sprite_index - 1;
 
-    const auto enemy_json = data["sprites"]["enemy"];
+    const auto& enemy_json = data["sprites"]["enemy"];
 
-    for (auto enemy_sprite : enemy_json)
+    for (auto& enemy_sprite : enemy_json)
     {
-        SDL_Rect enemy_rect;
-        enemy_rect.x = enemy_sprite["rect"]["x"];
-        enemy_rect.y = enemy_sprite["rect"]["y"];
-        enemy_rect.w = enemy_sprite["rect"]["w"];
-        enemy_rect.h = enemy_sprite["rect"]["h"];
+	    const SDL_Rect enemy_rect
+    	{
+            enemy_sprite["rect"]["x"],
+            enemy_sprite["rect"]["y"],
+            enemy_sprite["rect"]["w"],
+            enemy_sprite["rect"]["h"]
+        };
 
         sprite_table[sprite_index] = enemy_rect;
     	sprite_index++;
@@ -151,8 +159,10 @@ bool Game::load_config()
 
 void Game::init_ecs()
 {
-    //using namespace ecs;
-    // -- registering components --
+    // -- reserve space for entities --
+    world.reserve(ecs::ENTITY_CAPACITY);
+
+	// -- registering components --
     world.register_component<ecs::SpriteComponent>();
     world.register_component<ecs::TransformComponent>();
     world.register_component<ecs::BoundsComponent>();
@@ -161,10 +171,10 @@ void Game::init_ecs()
     world.register_component<ecs::HealthComponent>();
     world.register_component<ecs::DamagingComponent>();
 
-    // -- reserve space for entities --
-    world.reserve(ENTITY_CAPACITY);
+    // -- create and register systems --
+    world.create_system<ecs::systems::render_system>(world, renderer, texture_atlas, sprite_table);
 
-    // -- register systems -- 
+    
 
 }
 
@@ -181,10 +191,13 @@ void Game::init_planets()
         int pos_y = y_pos_dist(generator);
         int sprite_index = sprite_dist(generator);
 
-        auto& planet_rect = sprite_table[sprite_index];
+        const auto& planet_rect = sprite_table[sprite_index];
 
-        int x_width = pos_x + planet_rect.w * render_scale;
-        int y_height = pos_y + planet_rect.h * render_scale;
+        const int bounds_w = planet_rect.w * render_scale;
+        const int bounds_h = planet_rect.h * render_scale;
+
+        int x_width = pos_x + bounds_w;
+        int y_height = pos_y + bounds_h;
 
         if (x_width > desktopWidth)
         {
@@ -198,7 +211,7 @@ void Game::init_planets()
         const auto planet = world.create_entity();
 
         world.add_component<ecs::SpriteComponent>(planet, sprite_index);
-        world.add_component<ecs::BoundsComponent>(planet, x_width, y_height);
+        world.add_component<ecs::BoundsComponent>(planet, bounds_w, bounds_h);
         world.add_component<ecs::TransformComponent>(planet, pos_x, pos_y);
 
         //Planet random_planet
@@ -255,55 +268,6 @@ void Game::init_enemies()
     std::uniform_int_distribution<> y_pos_dist(0, desktopHeight);
 }
 
-void Game::draw_planets(SDL_Renderer* renderer)
-{
-	//for (Planet& planet : planet_table)
-	//{
-    //    auto planet_atlas_rect = sprite_table[planet.sprite_index];
-    //
-    //    SDL_Rect render_rect
-    //    {
-    //        planet.x,
-    //        planet.y,
-    //        planet_atlas_rect.w * render_scale,
-    //        planet_atlas_rect.h * render_scale
-    //    };
-    //
-    //    //SDL_Rect debug;
-    //    //debug.x = 142;
-    //    //debug.y = 144;
-    //    //debug.w = 1;
-    //    //debug.h = 1;
-    //    //
-    //    //SDL_Rect debug_dest;
-    //    //debug_dest.x = planet.x;
-    //    //debug_dest.y = planet.y;
-    //    //
-    //    //debug_dest.h = render_scale * 2;
-    //    //debug_dest.w = render_scale * 2;
-    //    //SDL_RenderCopy(gRenderer, texture_atlas, &debug, &debug_dest);
-    //
-    //    SDL_RenderCopy(renderer, texture_atlas, &planet_atlas_rect, &render_rect);
-	//}
-}
-
-void Game::draw_players(SDL_Renderer* renderer)
-{
-	//for (PlayerShip player : player_table)
-	//{
-    //    auto player_atlas_rect = sprite_table[player.sprite_index];
-    //
-    //    SDL_Rect render_rect
-    //    {
-    //        player.x,
-    //        player.y,
-    //        player_atlas_rect.w * render_scale,
-    //        player_atlas_rect.h * render_scale
-    //    };
-    //
-    //    SDL_RenderCopy(renderer, texture_atlas, &player_atlas_rect, &render_rect);
-	//}
-}
 
 void Game::Draw(float dt, SDL_Renderer* renderer)
 {
@@ -313,7 +277,7 @@ void Game::Draw(float dt, SDL_Renderer* renderer)
 
 void Game::Update(float dt)
 {
-	// TODO: add gameplay lol
+    world.run_systems(dt);
 }
 
 Game::~Game()

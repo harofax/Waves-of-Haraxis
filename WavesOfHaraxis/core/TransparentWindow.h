@@ -27,6 +27,7 @@ public:
 
 	void handle_keyboard_input(SDL_Event* e);
 	void handle_mouse_input(SDL_Event* e);
+	SDL_Renderer* renderer = nullptr;
 
 private:
 	bool init(const char* window_name);
@@ -35,5 +36,5 @@ private:
 	bool make_window_transparent(COLORREF colorKey) const;
 
 	SDL_Window* window = nullptr;
-	SDL_Renderer* renderer = nullptr;
+	
 };

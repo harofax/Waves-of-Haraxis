@@ -33,10 +33,13 @@ namespace ecs
 	
 		T& get(entity entity)
 		{
-			components[entity_to_component[entity]];
+			return components[entity_to_component[entity]];
 		}
 
-		const T& get(entity entity) const;
+		const T& get(entity entity) const
+		{
+			return components[entity_to_component.find(entity)->second];
+		}
 
 		template<typename... Args>
 		void add(entity entity, Args&&... args)
