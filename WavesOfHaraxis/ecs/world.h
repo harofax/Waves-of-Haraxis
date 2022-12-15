@@ -4,6 +4,7 @@
 #include "component_table.h"
 #include "entity_pool.h"
 #include "system.h"
+#include "components.h"
 
 namespace ecs
 {
@@ -19,16 +20,15 @@ namespace ecs
 			check_component_type<T>();
 			// make a new table for it                                          v--- the table type
 			components_data[T::component_id] = std::make_unique<component_table<T, ComponentCapacity, SystemCapacity>>(
-				entities.get_entity_signatures());
+				entities.get_entity_to_component(T::component_id), entities.get_entity_signatures());
 		}
 
 		template<typename T, typename ...Args>
 		T* create_system(Args&& ...args)
 		{
 			auto type = systems.size();
-
 			auto& system = systems.emplace_back(std::make_unique<T>(std::forward<Args>(args)...));
-			//system->init(type);
+			system->init(type, &entities.get_entity_to_managed_entity(type));
 
 			return static_cast<T*>(system.get());
 		}
@@ -52,7 +52,7 @@ namespace ecs
 
 		void remove_entity(entity r_entity)
 		{
-			for (auto i = size_t(0); i < ComponentCapacity; ++i)
+			for (auto i = static_cast<size_t>(0); i < ComponentCapacity; ++i)
 			{
 				if (components_data[i])
 				{
@@ -117,7 +117,11 @@ namespace ecs
 		}
 
 		template<typename ...Comps>
-		std::tuple<const Comps&...> get_components(entity entity) const;
+		std::tuple<const Comps&...> get_components(entity entity) const
+		{
+			check_component_types<Comps...>();
+			return std::tie(std::as_const(get_component_table<Comps>()->get(entity))...);
+		}
 
 		template<typename T, typename ...Args>
 		void add_component(entity entity, Args&&... args)
@@ -164,7 +168,7 @@ namespace ecs
 		template<typename T>
 		void check_component_type() const
 		{
-			static_assert(T::component_id < ComponentCapacity);
+			static_assert(std::is_base_of_v<ecs::Component<T>, T>);
 		}
 
 		template<typename  ...Ts>
@@ -179,7 +183,10 @@ namespace ecs
 			return static_cast<component_table<T, ComponentCapacity, SystemCapacity>*>(components_data[T::component_id].get());
 		}
 		template<typename T>
-		auto get_component_table() const;
+		auto get_component_table() const
+		{
+			return static_cast<const component_table<T, ComponentCapacity, SystemCapacity>*>(components_data[T::component_id].get());
+		};
 		
 	};
 }

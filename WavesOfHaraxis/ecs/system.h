@@ -1,6 +1,5 @@
 #pragma once
 #include <bitset>
-#include <unordered_map>
 #include <vector>
 #include "entity.h"
 
@@ -26,7 +25,7 @@ namespace ecs
 			(signature.set(Ts::component_id), ...);
 		}
 
-		[[nodiscard]] const std::vector<entity>& get_managed_entities() const
+		const std::vector<entity>& get_managed_entities() const
 		{
 			return managed_entities;
 		}
@@ -40,14 +39,22 @@ namespace ecs
 		friend ecs::world<ComponentCapacity, SystemCapacity>;
 
 		std::bitset<ComponentCapacity> signature;
+		std::size_t system_type;
 		std::vector<entity> managed_entities;
-		std::unordered_map<entity, entity_index> entity_to_managed_entity;
+		std::vector<entity_index>* entity_to_managed_entity = nullptr;
+
+		void init(std::size_t type, std::vector<entity_index>* entity_to_managed_entity_map)
+		{
+			system_type = type;
+			entity_to_managed_entity = entity_to_managed_entity_map;
+			
+		}
 
 		// check if entity is still relevant to current system
 		void on_entity_updated(entity entity, const std::bitset<ComponentCapacity>& components)
 		{
 			auto match = (signature & components) == signature;
-			auto managed = entity_to_managed_entity.contains(entity);
+			auto managed = (*entity_to_managed_entity)[entity] != invalid_index;
 
 			if (match && !managed)
 			{
@@ -61,7 +68,7 @@ namespace ecs
 
 		void on_entity_removed(entity entity)
 		{
-			if (entity_to_managed_entity.contains(entity))
+			if ((*entity_to_managed_entity)[entity] != invalid_index)
 			{
 				remove_entity(entity);
 			} 
@@ -69,7 +76,7 @@ namespace ecs
 
 		void add_entity(entity entity)
 		{
-			entity_to_managed_entity[entity] = static_cast<entity_index>(managed_entities.size());
+			(*entity_to_managed_entity)[entity]= static_cast<entity_index>(managed_entities.size());
 			managed_entities.emplace_back(entity);
 			on_managed_entity_added(entity);
 		}
@@ -77,10 +84,10 @@ namespace ecs
 		void remove_entity(entity entity)
 		{
 			on_managed_entity_removed(entity);
-			auto index = entity_to_managed_entity[entity];
+			const auto index = (*entity_to_managed_entity)[entity];
 
-			entity_to_managed_entity[managed_entities.back()] = index;
-			entity_to_managed_entity.erase(entity);
+			(*entity_to_managed_entity)[managed_entities.back()] = index;
+			(*entity_to_managed_entity)[entity] = invalid_index;
 
 			managed_entities[index] = managed_entities.back();
 			managed_entities.pop_back();
