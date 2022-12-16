@@ -1,6 +1,5 @@
 #pragma once
 #include <vector>
-#include <bitset>
 #include "entity.h"
 
 namespace ecs
@@ -18,28 +17,21 @@ namespace ecs
 	class component_table : public base_component_table
 	{
 	public:
-		component_table(std::vector<entity_index>& ent_to_component,
-			std::vector<std::bitset<ComponentCapacity>>& ent_signatures) :
-			entity_to_component(ent_to_component), entity_signatures(ent_signatures)
+		component_table(std::vector<entity_index>& ent_to_component) :
+			entity_to_component(ent_to_component)
 		{
 
 		}
-		//component_table(std::vector<std::bitset<ComponentCapacity>>& entity_signatures) :
-		//	entity_signatures(entity_signatures)
-		//{
-		//}
 
 		virtual void reserve(std::size_t size) override
 		{
 			component_to_entity.reserve(size);
-			component_to_entity.reserve(size);
-			//entity_to_component.reserve(size);
+			components.reserve(size);
 		}
 
 		T& get(entity entity)
 		{
-			auto index = entity_to_component[entity];
-			return components[index];
+			return components[entity_to_component[entity]];
 		}
 
 		const T& get(entity entity) const
@@ -54,12 +46,10 @@ namespace ecs
 			components.emplace_back(std::forward<Args>(args)...);
 			component_to_entity.emplace_back(entity);
 			entity_to_component[entity] = index;
-			entity_signatures[entity][T::component_id] = true;
 		}
 
 		void remove(entity entity)
 		{
-			entity_signatures[entity][T::component_id] = false;
 			auto index = entity_to_component[entity];
 
 			// move -> popback => fast
@@ -70,6 +60,7 @@ namespace ecs
 
 			// update entity_to_component map
 			entity_to_component[component_to_entity.back()] = index;
+			entity_to_component[entity] = invalid_index;
 			//entity_to_component.erase(entity);
 
 			// update component_to_entity table
@@ -81,7 +72,7 @@ namespace ecs
 		virtual bool try_remove(entity entity) override
 		{
 			// check if the bit for the component is set in the signature
-			if (entity_signatures[entity][T::component_id])
+			if (entity_to_component[entity] != invalid_index)
 			{
 				remove(entity);
 				return true;
@@ -101,6 +92,5 @@ namespace ecs
 		std::vector<T> components;
 		std::vector<entity> component_to_entity;
 		std::vector<entity_index>& entity_to_component;
-		std::vector<std::bitset<ComponentCapacity>>& entity_signatures;
 	};
 }

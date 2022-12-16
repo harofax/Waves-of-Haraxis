@@ -12,9 +12,6 @@ namespace ecs
 	class world
 	{
 	public:
-
-		int entity_count = 0;
-
 		template<typename T>
 		void register_component()
 		{
@@ -22,7 +19,7 @@ namespace ecs
 			check_component_type<T>();
 			// make a new table for it                                          v--- the table type
 			components_data[T::component_id] = std::make_unique<component_table<T, ComponentCapacity, SystemCapacity>>(
-				entities.get_entity_to_component(T::component_id), entities.get_entity_signatures());
+				entities.get_entity_to_component(T::component_id));
 		}
 
 		template<typename T, typename ...Args>
@@ -30,7 +27,7 @@ namespace ecs
 		{
 			auto type = systems.size();
 			auto& system = systems.emplace_back(std::make_unique<T>(std::forward<Args>(args)...));
-			system->init(type, &entities.get_entity_to_managed_entity(type));
+			system->init(type, &entities.get_entity_to_managed_entity(type), &entities);
 
 			return static_cast<T*>(system.get());
 		}
@@ -49,8 +46,6 @@ namespace ecs
 
 		entity create_entity()
 		{
-			entity_count++;
-			printf("entity count: %d\n", entity_count);
 			return entities.create_entity();
 		}
 
@@ -63,13 +58,14 @@ namespace ecs
 					components_data[i]->try_remove(r_entity);
 				}
 
-				for (auto& system : systems)
-				{
-					system->on_entity_removed(r_entity);
-				}
-
-				entities.remove(r_entity);
 			}
+
+			for (auto& system : systems)
+			{
+				system->on_entity_removed(r_entity);
+			}
+
+			entities.remove(r_entity);
 		}
 
 		void run_systems(float dt)
@@ -87,17 +83,15 @@ namespace ecs
 			check_component_type<T>();
 
 			// check the signature to see if the component id bit is set
-			return entities.get_signature(entity)[T::component_id];
+			return entities.template has_component<T>(entity);
 		}
 
 		template<typename ...Ts>
 		bool has_components(entity entity) const
 		{
 			check_component_types<Ts...>();
-			auto signatures = std::bitset<ComponentCapacity>();
-			// fold this hecking thing
-			(signatures.set(Ts::component_id), ...);
-			return (signatures & entities.get_signature(entity)) == signatures;
+			
+			return entities.template has_components<Ts...>(entity);
 		}
 
 		template<typename T>
@@ -138,10 +132,10 @@ namespace ecs
 			get_component_table<T>()->add(entity, std::forward<Args>(args)...);
 
 			// notify systems of what happen
-			const auto& signature = entities.get_signature(entity);
+			
 			for (auto& system : systems)
 			{
-				system->on_entity_updated(entity, signature);
+				system->on_entity_updated(entity);
 			}
 		}
 
@@ -152,10 +146,9 @@ namespace ecs
 			get_component_table<T>()->remove(entity);
 
 			// notify systems
-			const auto& signature = entities.get_signature(entity);
 			for (auto& system : systems)
 			{
-				system->on_entity_updated(entity, signature);
+				system->on_entity_updated(entity);
 			}
 		}
 

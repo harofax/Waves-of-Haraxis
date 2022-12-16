@@ -1,7 +1,9 @@
 #pragma once
-#include <bitset>
+
+#include <functional>
 #include <vector>
 #include "entity.h"
+#include "entity_pool.h"
 // for inheriting systems
 #include "components.h"
 #include "world.h"
@@ -16,7 +18,14 @@ namespace ecs
 	class system
 	{
 	public:
-		system(world<ComponentCapacity, SystemCapacity>& context) : world_context(context) {}
+		system(world<ComponentCapacity, SystemCapacity>& context) : world_context(context)
+		{
+			// set default signature check for systems that dont check for it
+			check_signature = [this](ecs::entity entity)
+			{
+				return false;
+			};
+		}
 		virtual ~system() = default;
 
 		virtual void run(float dt) = 0;
@@ -26,7 +35,10 @@ namespace ecs
 		template<typename ...Ts>
 		void set_signature()
 		{
-			(signature.set(Ts::component_id), ...);
+			check_signature = [this](ecs::entity entity)
+			{
+				return entities->template has_components<Ts...>(entity);
+			};
 		}
 
 		const std::vector<entity>& get_managed_entities() const
@@ -42,22 +54,24 @@ namespace ecs
 	private:
 		friend ecs::world<ComponentCapacity, SystemCapacity>;
 
-		std::bitset<ComponentCapacity> signature;
+		std::function<bool(ecs::entity)> check_signature;
 		std::size_t system_type;
 		std::vector<entity> managed_entities;
 		std::vector<entity_index>* entity_to_managed_entity = nullptr;
+		const entity_pool<ComponentCapacity, SystemCapacity>* entities = nullptr;
 
-		void init(std::size_t type, std::vector<entity_index>* entity_to_managed_entity_map)
+		void init(std::size_t type, std::vector<entity_index>* entity_to_managed_entity_map,
+			const entity_pool<ComponentCapacity, SystemCapacity>* entities_pool)
 		{
 			system_type = type;
 			entity_to_managed_entity = entity_to_managed_entity_map;
-
+			entities = entities_pool;
 		}
 
 		// check if entity is still relevant to current system
-		void on_entity_updated(entity entity, const std::bitset<ComponentCapacity>& components)
+		void on_entity_updated(entity entity)
 		{
-			auto match = (signature & components) == signature;
+			auto match = check_signature(entity);
 			auto managed = (*entity_to_managed_entity)[entity] != invalid_index;
 
 			if (match && !managed)

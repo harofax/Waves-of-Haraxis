@@ -1,6 +1,5 @@
 #pragma once
 #include <vector>
-#include <bitset>
 #include <numeric>
 #include <entity.h>
 
@@ -16,7 +15,6 @@ namespace ecs
         {
             available_entities.resize(amount);
             std::iota(std::begin(available_entities), std::end(available_entities), 0);
-            entity_signatures.resize(amount);
 
             for (auto& entity_to_component_element : entity_to_component_map)
             {
@@ -28,17 +26,9 @@ namespace ecs
                 entity_to_managed.resize(amount);
             }
 
+            next_entity = 0;
         }
 
-        std::vector<std::bitset<ComponentCapacity>>& get_entity_signatures()
-        {
-            return entity_signatures;
-        }
-
-        const std::bitset<ComponentCapacity>& get_signature(entity entity) const
-        {
-            return entity_signatures[entity];
-        }
 
         std::vector<entity_index>& get_entity_to_component(std::size_t type)
         {
@@ -59,12 +49,12 @@ namespace ecs
             if (available_entities.empty())
             {
                 // if not, we create a new spot
-                entity = static_cast<ecs::entity>(entity_signatures.size());
-                entity_signatures.emplace_back();
+                entity = next_entity;
+                next_entity++;
 
                 for (auto& entity_to_comp : entity_to_component_map)
                 {
-                    entity_to_comp.emplace_back();
+                    entity_to_comp.emplace_back(invalid_index);
                 }
                 for (auto& entity_to_managed_ent : entity_to_managed_entities)
                 {
@@ -72,19 +62,22 @@ namespace ecs
                     entity_to_managed_ent.emplace_back(invalid_index);
                 }
 
-                return entity;
-
             }
-           
-            // if there is a free one (maybe it was deleted), we grab the first free one
-            // using .back() cuz its FAST
-            entity = available_entities.back();
-            available_entities.pop_back();
-            entity_signatures[entity].reset();
-
-            for (auto& entity_to_managed : entity_to_managed_entities)
+            else
             {
-                entity_to_managed[entity] = invalid_index;
+                // if there is a free one (maybe it was deleted), we grab the first free one
+				// using .back() cuz its FAST
+                entity = available_entities.back();
+                available_entities.pop_back();
+
+                for (auto& entity_to_comp : entity_to_component_map)
+                {
+                    entity_to_comp[entity] = invalid_index;
+                }
+                for (auto& entity_to_managed : entity_to_managed_entities)
+                {
+                    entity_to_managed[entity] = invalid_index;
+                }
             }
            
 
@@ -97,8 +90,21 @@ namespace ecs
             available_entities.push_back(entity);
         }
 
+        template<typename T>
+        bool has_component(entity entity) const
+        {
+            return entity_to_component_map[T::component_id][entity] != invalid_index;
+        }
+
+        template<typename ...Ts>
+        bool has_components(entity entity) const
+        {
+            return (has_component<Ts>(entity) && ...);
+        }
+
+
     private:
-        std::vector<std::bitset<ComponentCapacity>> entity_signatures;
+        entity next_entity = 0;
         std::array<std::vector<entity_index>, ComponentCapacity> entity_to_component_map;
         std::array<std::vector<entity_index>, SystemCapacity> entity_to_managed_entities;
         std::vector<entity> available_entities;
