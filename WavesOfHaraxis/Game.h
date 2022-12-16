@@ -5,7 +5,9 @@
 #include <fstream>
 #include "world.h"
 #include "components.h"
+#include "SpriteManager.h"
 #include "core/game_config.h"
+#include "systems/all_systems.h"
 
 
 using json = nlohmann::json;
@@ -34,7 +36,8 @@ public:
 	virtual void Draw(float dt, SDL_Renderer* renderer) final;
 
 private:
-	SDL_Texture* texture_atlas {nullptr};
+	//SpriteManager sprite_manager;
+	//SDL_Texture* texture_atlas {nullptr};
 	//json load_json_data(const char* json_path) const;
 
 	ecs::world<ecs::COMPONENT_CAPACITY, ecs::SYSTEM_CAPACITY> world;

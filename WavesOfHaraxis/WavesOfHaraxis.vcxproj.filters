@@ -13,6 +13,15 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Header Files\Systems">
+      <UniqueIdentifier>{d94b0f19-8d09-414c-acb0-fbff2a7bd209}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Core">
+      <UniqueIdentifier>{f2e48e71-0b8f-4151-81dc-b3e3f5c218c8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\ECS">
+      <UniqueIdentifier>{a38cd9db-f995-4128-a76e-db15f8526602}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -24,46 +33,86 @@
     <ClCompile Include="core\TransparentWindow.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="ecs\systems\SpriteManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Game.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ecs\components.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="ecs\systems\apply_velocity_system.h">
+      <Filter>Header Files\Systems</Filter>
     </ClInclude>
-    <ClInclude Include="core\TransparentWindow.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="ecs\entity_pool.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="ecs\entity.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="ecs\component_table.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="ecs\world.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="ecs\systems\enemy_spawner_system.h">
+      <Filter>Header Files\Systems</Filter>
     </ClInclude>
     <ClInclude Include="ecs\systems\render_system.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="ecs\system.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="ecs\systems\ecs_config.h">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\Systems</Filter>
     </ClInclude>
     <ClInclude Include="ecs\systems\input_system.h">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\Systems</Filter>
+    </ClInclude>
+    <ClInclude Include="core\TransparentWindow.h">
+      <Filter>Header Files\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="ecs\system.h">
+      <Filter>Header Files\Systems</Filter>
+    </ClInclude>
+    <ClInclude Include="core\SpriteManager.h">
+      <Filter>Header Files\Core</Filter>
     </ClInclude>
     <ClInclude Include="core\keyboard_state.h">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\Core</Filter>
     </ClInclude>
-    <ClInclude Include="ecs\systems\apply_velocity_system.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="core\game_config.h">
+      <Filter>Header Files\Core</Filter>
     </ClInclude>
+    <ClInclude Include="ecs\component_table.h">
+      <Filter>Header Files\ECS</Filter>
+    </ClInclude>
+    <ClInclude Include="ecs\components.h">
+      <Filter>Header Files\ECS</Filter>
+    </ClInclude>
+    <ClInclude Include="ecs\entity.h">
+      <Filter>Header Files\ECS</Filter>
+    </ClInclude>
+    <ClInclude Include="ecs\entity_pool.h">
+      <Filter>Header Files\ECS</Filter>
+    </ClInclude>
+    <ClInclude Include="ecs\world.h">
+      <Filter>Header Files\ECS</Filter>
+    </ClInclude>
+    <ClInclude Include="ecs\systems\enemy_mover_system.h">
+      <Filter>Header Files\Systems</Filter>
+    </ClInclude>
+    <ClInclude Include="ecs\systems\all_systems.h">
+      <Filter>Header Files\Systems</Filter>
+    </ClInclude>
+    <ClInclude Include="ecs\systems\enemy_despawner_system.h">
+      <Filter>Header Files\Systems</Filter>
+    </ClInclude>
+    <ClInclude Include="ecs\systems\shooting_system.h">
+      <Filter>Header Files\Systems</Filter>
+    </ClInclude>
+    <ClInclude Include="ecs\systems\bullet_system.h">
+      <Filter>Header Files\Systems</Filter>
+    </ClInclude>
+    <ClInclude Include="ecs\systems\bullet_despawn_system.h">
+      <Filter>Header Files\Systems</Filter>
+    </ClInclude>
+    <ClInclude Include="ecs\systems\cull_removed_system.h">
+      <Filter>Header Files\Systems</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="res\spritesheet.json">
+      <Filter>Resource Files</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="res\spritesheet.png">
+      <Filter>Resource Files</Filter>
+    </Image>
   </ItemGroup>
 </Project>

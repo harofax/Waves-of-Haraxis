@@ -59,45 +59,61 @@ namespace ecs
 
     struct Health : public Component<Health>
     {
-	    explicit Health(int health)
+	    explicit Health(short int health)
 		    : health(health)
 	    {
 	    }
 
-	    int health;
+	    short int health;
     };
 
+    // shoot_dir is -1 or 1 depending on what direction the weapon will fire
     struct Weapon : public Component<Weapon>
     {
-	    Weapon(int damage, bool shoot_up)
+	    Weapon(short int damage, const short int shoot_dir)
 		    : damage(damage),
-		      shoot_up(shoot_up)
+            shoot_direction(shoot_dir)
 	    {
 	    }
 
-	    int damage;
+	    short int damage;
         // only shoot up or down, so made it a bool
-        bool shoot_up;
+        short int shoot_direction;
     };
 
     struct Damaging : public Component<Damaging>
     {
-	    explicit Damaging(int damage)
+	    explicit Damaging(short int damage)
 		    : damage(damage)
 	    {
 	    }
 
-	    int damage;
+	    short int damage;
     };
 
     struct PlayerInput : public Component<PlayerInput>
     {
-	    PlayerInput(bool can_move) : can_move(can_move)
+	    PlayerInput(const bool can_move) : can_move(can_move)
 	    {
 	    }
 
 	    bool can_move;
     };
+
+    struct Enemy : public Component<Enemy> {};
+
+    // dir is -1 or 1 depending on what direction the bullet travels
+    struct Bullet : public Component<Bullet>
+    {
+        explicit Bullet(const short int dir) : direction(dir) {  }
+        short int direction;
+    };
+
+    struct Shooting : public Component<Shooting> {};
+
+    struct Alive : public Component<Alive> {};
+
+    struct ToBeRemoved : public Component<ToBeRemoved> {};
 
 }
 

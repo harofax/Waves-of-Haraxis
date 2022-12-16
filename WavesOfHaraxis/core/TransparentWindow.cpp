@@ -110,7 +110,7 @@ bool TransparentWindow::init(const char* window_name)
 	{
 		window = SDL_CreateWindow(window_name,
 			0, 0,
-			desktop_width, desktop_height, SDL_WINDOW_BORDERLESS);
+			config::desktop_width, config::desktop_height, SDL_WINDOW_BORDERLESS);
 
 		if (window == nullptr)
 		{

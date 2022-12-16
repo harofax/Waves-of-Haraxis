@@ -13,6 +13,8 @@ namespace ecs
 	{
 	public:
 
+		int entity_count = 0;
+
 		template<typename T>
 		void register_component()
 		{
@@ -47,6 +49,8 @@ namespace ecs
 
 		entity create_entity()
 		{
+			entity_count++;
+			printf("entity count: %d\n", entity_count);
 			return entities.create_entity();
 		}
 
@@ -105,7 +109,11 @@ namespace ecs
 
 
 		template<typename T>
-		const T& get_component(entity entity) const;
+		const T& get_component(entity entity) const
+		{
+			check_component_type<T>();
+			return get_component_table<T>()->get(entity);
+		}
 
 		// returns a tuple of the components that are requested, so we can
 		// iterate through them in systems
@@ -166,13 +174,13 @@ namespace ecs
 
 
 		template<typename T>
-		void check_component_type() const
+		constexpr void check_component_type() const
 		{
 			static_assert(std::is_base_of_v<ecs::Component<T>, T>);
 		}
 
 		template<typename  ...Ts>
-		void check_component_types() const
+		constexpr void check_component_types() const
 		{
 			(check_component_type<Ts>(), ...);
 		}

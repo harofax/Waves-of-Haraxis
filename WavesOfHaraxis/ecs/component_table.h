@@ -38,7 +38,8 @@ namespace ecs
 
 		T& get(entity entity)
 		{
-			return components[entity_to_component[entity]];
+			auto index = entity_to_component[entity];
+			return components[index];
 		}
 
 		const T& get(entity entity) const

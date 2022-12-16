@@ -15,7 +15,6 @@ namespace ecs
         void reserve(std::size_t amount)
         {
             available_entities.resize(amount);
-            // fill available_entities with increasing entity ids
             std::iota(std::begin(available_entities), std::end(available_entities), 0);
             entity_signatures.resize(amount);
 
@@ -73,20 +72,21 @@ namespace ecs
                     entity_to_managed_ent.emplace_back(invalid_index);
                 }
 
-            }
-            else
-            {
-                // if there is a free one (maybe it was deleted), we grab the first free one
-                // using .back() cuz its FAST
-                entity = available_entities.back();
-                available_entities.pop_back();
-                entity_signatures[entity].reset();
+                return entity;
 
-                for (auto& entity_to_managed : entity_to_managed_entities)
-                {
-                    entity_to_managed[entity] = invalid_index;
-                }
             }
+           
+            // if there is a free one (maybe it was deleted), we grab the first free one
+            // using .back() cuz its FAST
+            entity = available_entities.back();
+            available_entities.pop_back();
+            entity_signatures[entity].reset();
+
+            for (auto& entity_to_managed : entity_to_managed_entities)
+            {
+                entity_to_managed[entity] = invalid_index;
+            }
+           
 
             return entity;
         }

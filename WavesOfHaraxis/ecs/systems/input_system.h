@@ -1,10 +1,6 @@
 #pragma once
 #include "system.h"
-#include "world.h"
-#include "components.h"
-#include "core/game_config.h"
 #include "keyboard_state.h"
-
 
 namespace ecs
 {
@@ -25,6 +21,8 @@ namespace ecs
 				float y_dir = 0;
 
 				bool moved = false;
+
+				bool shoot = false;
 
 				if (input.is_key_down(SDL_SCANCODE_A))
 				{
@@ -47,12 +45,19 @@ namespace ecs
 					moved = true;
 				}
 
-				if (moved)
+				if (input.is_key_pressed(SDL_SCANCODE_SPACE))
 				{
-					for (auto& entity : get_managed_entities())
+					shoot = true;
+				}
+
+				if (moved || shoot)
+				{
+					for (auto& player_ship : get_managed_entities())
 					{
-						auto& player_input = world_context.get_component<PlayerInput>(entity);
-						world_context.add_component<Velocity>(entity, x_dir * (player_speed * dt), y_dir * (player_speed * dt));
+						if (moved)
+							world_context.add_component<Velocity>(player_ship, x_dir * (config::player_speed * dt), y_dir * (config::player_speed * dt));
+						if (shoot)
+							world_context.add_component<Shooting>(player_ship);
 					}
 				}
 			}

@@ -1,8 +1,5 @@
 #pragma once
-#include "components.h"
 #include "system.h"
-#include "world.h"
-#include "core/game_config.h"
 
 namespace ecs
 {
@@ -27,12 +24,12 @@ namespace ecs
 					pos.x += velocity.x_vel;
 					pos.y += velocity.y_vel;
 
-					if (pos.x > desktop_width)
+					if (pos.x > config::desktop_width)
 						pos.x = 0 - bounds.w;
 
 					// (included 0 for clarity)
 					else if (pos.x < 0 - bounds.w)
-						pos.x = desktop_width;
+						pos.x = config::desktop_width;
 
 
 					world_context.remove_component<Velocity>(entity);

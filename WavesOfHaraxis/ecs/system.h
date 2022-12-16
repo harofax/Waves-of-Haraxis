@@ -2,6 +2,10 @@
 #include <bitset>
 #include <vector>
 #include "entity.h"
+// for inheriting systems
+#include "components.h"
+#include "world.h"
+#include "game_config.h"
 
 namespace ecs
 {

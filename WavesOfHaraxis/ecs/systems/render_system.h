@@ -1,9 +1,6 @@
 #pragma once
-#include "components.h"
 #include "SDL_render.h"
 #include "system.h"
-#include "world.h"
-#include <game_config.h>
 
 #define PRINT(x) std::cout << (x) << std::endl
 
@@ -15,11 +12,10 @@ namespace ecs
 		{
 		public:
 
-			render_system(ecs::world<COMPONENT_CAPACITY, SYSTEM_CAPACITY>& context, SDL_Renderer* renderer, SDL_Texture* atlas, SDL_Rect atlas_lookup_table[]) : system(context)
+			render_system(ecs::world<COMPONENT_CAPACITY, SYSTEM_CAPACITY>& context, SDL_Renderer* renderer) : system(context)
 			{
 				this->renderer = renderer;
-				this->atlas_texture = atlas;
-				this->atlas_lookup = atlas_lookup_table;
+		
 
 				set_signature<Sprite, Position, Bounds>();
 			}
@@ -28,29 +24,27 @@ namespace ecs
 			{
 				for (const auto& entity  : get_managed_entities())
 				{
-					auto [sprite, transform, bounds] =
+					auto [sprite, position, bounds] =
 						world_context.get_components<ecs::Sprite, ecs::Position, ecs::Bounds>(entity);
 
-					auto atlas_rect = atlas_lookup[sprite.sprite_index];
+					auto atlas_rect = SpriteManager::sprite_table[sprite.sprite_index];
 
 					SDL_Rect render_rect
 					{
-						transform.x,
-						transform.y,
-						bounds.w,
-						bounds.h
+						static_cast<int>(position.x),
+						static_cast<int>(position.y),
+						static_cast<int>(bounds.w),
+						static_cast<int>(bounds.h)
 					};
 
 					
 
-					SDL_RenderCopy(renderer, atlas_texture, &atlas_rect, &render_rect);
+					SDL_RenderCopy(renderer, SpriteManager::atlas_texture, &atlas_rect, &render_rect);
 				}
 			}
 
 		private:
 			SDL_Renderer* renderer;
-			SDL_Texture* atlas_texture {nullptr};
-			SDL_Rect* atlas_lookup;
 		};
 	}
 	

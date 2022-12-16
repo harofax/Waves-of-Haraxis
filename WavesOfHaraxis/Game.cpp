@@ -1,9 +1,5 @@
 #include "Game.h"
 
-#include "systems/apply_velocity_system.h"
-#include "systems/input_system.h"
-#include "systems/render_system.h"
-
 
 #define PRINT(x) std::cout << (x) << std::endl
 
@@ -17,22 +13,8 @@ const char* texture_atlas_json_path = "res\\spritesheet.json";
 
 int num_background_planets = 0;
 int num_player_ships = 0;
-int num_enemy_ships = 0;
-int render_scale = 2;
+int num_total_enemy_ships = 0;
 
-// --- data ---
-
-// won't use more than 16 sprites 
-SDL_Rect sprite_table[16];
-//std::map<int, SDL_Rect> sprite_map;
-
-
-// 0 -> planet, 1 -> player, 2 -> enemy
-constexpr int PLANET_SPRITE_RANGE_INDEX = 0;
-constexpr int PLAYER_SPRITE_RANGE_INDEX = 1;
-constexpr int ENEMY_SPRITE_RANGE_INDEX = 2;
-constexpr int BULLET_SPRITE_INDEX = 3;
-int sprite_range_table[4];
 
 Game::Game(const char* window_name) : TransparentWindow(window_name)
 {
@@ -56,12 +38,24 @@ Game::Game(const char* window_name) : TransparentWindow(window_name)
 
 void parse_json_data(json::const_reference data)
 {
-    // config according to json data
+    // read config from json
     num_background_planets = data["config"]["num_bg_planets"];
     num_player_ships = data["config"]["num_player_ships"];
-    num_enemy_ships = data["config"]["num_enemy_ships"];
+    num_total_enemy_ships = data["config"]["num_enemy_ships"];
 
-    render_scale = data["config"]["scale"];
+    config::enemy_time_between_waves = data["config"]["time_between_waves"];
+    config::enemies_per_wave = data["config"]["enemies_per_wave"];
+
+    config::player_speed = data["config"]["player_speed"];
+    config::enemy_base_speed = data["config"]["enemy_base_speed"];
+
+    config::bullet_damage = data["config"]["bullet_damage"];
+    config::bullet_speed = data["config"]["bullet_speed"];
+
+    config::render_scale = data["config"]["scale"];
+
+
+    // read sprite info and put in SpriteManager
 
     int sprite_index = 0;
 
@@ -77,10 +71,10 @@ void parse_json_data(json::const_reference data)
             planet_sprite["rect"]["h"]
         };
 
-        sprite_table[sprite_index] = planet_rect;
+	    SpriteManager::sprite_table[sprite_index] = planet_rect;
         sprite_index++;
     }
-    sprite_range_table[PLANET_SPRITE_RANGE_INDEX] = sprite_index - 1;
+    SpriteManager::sprite_range_table[SpriteManager::PLANET_SPRITE_RANGE_INDEX] = sprite_index - 1;
 
     const auto& player_json = data["sprites"]["player"];
 
@@ -94,10 +88,10 @@ void parse_json_data(json::const_reference data)
             player_sprite["rect"]["h"]
     	};
 
-        sprite_table[sprite_index] = player_rect;
+	    SpriteManager::sprite_table[sprite_index] = player_rect;
         sprite_index++;
     }
-    sprite_range_table[PLAYER_SPRITE_RANGE_INDEX] = sprite_index - 1;
+    SpriteManager::sprite_range_table[SpriteManager::PLAYER_SPRITE_RANGE_INDEX] = sprite_index - 1;
 
     const auto& enemy_json = data["sprites"]["enemy"];
 
@@ -111,11 +105,11 @@ void parse_json_data(json::const_reference data)
             enemy_sprite["rect"]["h"]
         };
 
-        sprite_table[sprite_index] = enemy_rect;
+	    SpriteManager::sprite_table[sprite_index] = enemy_rect;
     	sprite_index++;
     }
 
-    sprite_range_table[ENEMY_SPRITE_RANGE_INDEX] = sprite_index - 1;
+    SpriteManager::sprite_range_table[SpriteManager::ENEMY_SPRITE_RANGE_INDEX] = sprite_index - 1;
 
     const auto& bullet_json = data["sprites"]["bullet"];
 
@@ -126,8 +120,8 @@ void parse_json_data(json::const_reference data)
         bullet_json["rect"]["w"],
         bullet_json["rect"]["h"]
     };
-    sprite_table[sprite_index] = bullet_rect;
-    sprite_range_table[BULLET_SPRITE_INDEX] = sprite_index;
+    SpriteManager::sprite_table[sprite_index] = bullet_rect;
+    SpriteManager::sprite_range_table[SpriteManager::BULLET_SPRITE_INDEX] = sprite_index;
 
 
 }
@@ -151,9 +145,9 @@ bool Game::load_media()
 {
 	bool success = true;
 
-	texture_atlas = load_texture(texture_atlas_image_path);
+	SpriteManager::atlas_texture = load_texture(texture_atlas_image_path);
 
-	if (texture_atlas == nullptr)
+	if (SpriteManager::atlas_texture == nullptr)
 	{
 		printf("failed to load spritesheet at %s", texture_atlas_image_path);
 		success = false;
@@ -182,32 +176,48 @@ void Game::init_ecs()
 
 	// -- registering components --
     world.register_component<ecs::Sprite>();
-    world.register_component<ecs::Position>();
     world.register_component<ecs::Bounds>();
+    world.register_component<ecs::Position>();
     world.register_component<ecs::Velocity>();
-    world.register_component<ecs::Weapon>();
     world.register_component<ecs::Health>();
+    world.register_component<ecs::Weapon>();
     world.register_component<ecs::Damaging>();
     world.register_component<ecs::PlayerInput>();
+    world.register_component<ecs::Enemy>();
+    world.register_component<ecs::Bullet>();
+    world.register_component<ecs::Shooting>();
+    world.register_component<ecs::Alive>();
+    world.register_component<ecs::ToBeRemoved>();
     // todo: collider? maybe just use bounds
 
 
-    // -- create and register systems --
+        // -- create and register systems --
     world.create_system<ecs::systems::input_system>(world, keyboard);
     world.create_system<ecs::systems::apply_velocity_system>(world);
-    world.create_system<ecs::systems::render_system>(world, renderer, texture_atlas, sprite_table);
-    // todo: shooting system
 
-    
+
+	world.create_system<ecs::systems::enemy_spawner_system>(world, config::enemies_per_wave, config::enemy_time_between_waves, generator);
+    world.create_system<ecs::systems::enemy_mover_system>(world);
+
+	world.create_system<ecs::systems::shooting_system>(world);
+    world.create_system<ecs::systems::bullet_system>(world);
+
+
+    // todo: make generic culling system instead
+    world.create_system<ecs::systems::enemy_despawner_system>(world);
+    world.create_system<ecs::systems::bullet_despawn_system>(world);
+
+    world.create_system<ecs::systems::cull_removed_system>(world);
+    world.create_system<ecs::systems::render_system>(world, renderer);
 
 }
 
 void Game::init_planets()
 {
-    std::uniform_int_distribution<> x_pos_dist(0, desktop_width);
-    std::uniform_int_distribution<> y_pos_dist(0, desktop_height);
+    std::uniform_int_distribution<> x_pos_dist(0, config::desktop_width);
+    std::uniform_int_distribution<> y_pos_dist(0, config::desktop_height);
 
-    std::uniform_int_distribution<> sprite_dist(0, sprite_range_table[PLANET_SPRITE_RANGE_INDEX]);
+    std::uniform_int_distribution<> sprite_dist(0, SpriteManager::sprite_range_table[SpriteManager::PLANET_SPRITE_RANGE_INDEX]);
 
     for (int i = 0; i < num_background_planets; i++)
     {
@@ -215,21 +225,21 @@ void Game::init_planets()
         int pos_y = y_pos_dist(generator);
         int sprite_index = sprite_dist(generator);
 
-        const auto& planet_rect = sprite_table[sprite_index];
+        const auto& planet_rect = SpriteManager::sprite_table[sprite_index];
 
-        const int bounds_w = planet_rect.w * render_scale;
-        const int bounds_h = planet_rect.h * render_scale;
+        const int bounds_w = planet_rect.w *config::render_scale;
+        const int bounds_h = planet_rect.h *config::render_scale;
 
         int x_width = pos_x + bounds_w;
         int y_height = pos_y + bounds_h;
 
-        if (x_width > desktop_width)
+        if (x_width > config::desktop_width)
         {
-            pos_x -= planet_rect.w * render_scale;
+            pos_x -= planet_rect.w *config::render_scale;
         }
-        if (y_height > desktop_height)
+        if (y_height > config::desktop_height)
         {
-            pos_y -= planet_rect.h * render_scale;
+            pos_y -= planet_rect.h *config::render_scale;
         }
 
         const auto planet = world.create_entity();
@@ -243,31 +253,31 @@ void Game::init_planets()
 
 void Game::init_players()
 {
-    std::uniform_int_distribution<> x_pos_dist(0, desktop_width);
-    std::uniform_int_distribution<> y_pos_dist(desktop_height / 2, desktop_height);
+    std::uniform_int_distribution<> x_pos_dist(0, config::desktop_width);
+    std::uniform_int_distribution<> y_pos_dist(config::desktop_height / 2, config::desktop_height);
 
     for (int i = 0; i < num_player_ships; i++)
     {
         int pos_x = x_pos_dist(generator);
         int pos_y = y_pos_dist(generator);
 
-    	const int sprite_index = sprite_range_table[PLANET_SPRITE_RANGE_INDEX] + 2;
+    	const int sprite_index = SpriteManager::sprite_range_table[SpriteManager::PLANET_SPRITE_RANGE_INDEX] + 2;
 
-        const auto& rect = sprite_table[sprite_index];
+        const auto& rect = SpriteManager::sprite_table[sprite_index];
 
-        const int bounds_w = rect.w * render_scale;
-        const int bounds_h = rect.h * render_scale;
+        const int bounds_w = rect.w *config::render_scale;
+        const int bounds_h = rect.h *config::render_scale;
 
         const int x_width = pos_x + bounds_w;
         const int y_height = pos_y + bounds_h;
 
-        if (x_width > desktop_width)
+        if (x_width > config::desktop_width)
         {
-            pos_x -= rect.w * render_scale;
+            pos_x -= rect.w *config::render_scale;
         }
-        if (y_height > desktop_height)
+        if (y_height > config::desktop_height)
         {
-            pos_y -= rect.h * render_scale;
+            pos_y -= rect.h *config::render_scale;
         }
 
         const auto& player = world.create_entity();
@@ -276,6 +286,7 @@ void Game::init_players()
         world.add_component<ecs::Bounds>(player, bounds_w, bounds_h);
         world.add_component<ecs::Position>(player, pos_x, pos_y);
         world.add_component<ecs::PlayerInput>(player, true);
+        world.add_component<ecs::Weapon>(player, config::bullet_damage, -1);
 
         //PlayerShip player
         //{
@@ -290,8 +301,6 @@ void Game::init_players()
 
 void Game::init_enemies()
 {
-    std::uniform_int_distribution<> x_pos_dist(0, desktop_width);
-    std::uniform_int_distribution<> y_pos_dist(0, desktop_height);
 }
 
 
@@ -308,7 +317,7 @@ void Game::Update(float dt)
 
 Game::~Game()
 {
-    SDL_DestroyTexture(texture_atlas);
+    SDL_DestroyTexture(SpriteManager::atlas_texture);
 }
 
 
