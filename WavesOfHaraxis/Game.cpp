@@ -207,7 +207,11 @@ void Game::init_ecs()
     world.create_system<ecs::systems::enemy_despawner_system>(world);
     world.create_system<ecs::systems::bullet_despawn_system>(world);
 
+    
+
     world.create_system<ecs::systems::cull_removed_system>(world);
+
+    world.create_system<ecs::systems::collision_damage_system>(world);
     world.create_system<ecs::systems::render_system>(world, renderer);
 
 }

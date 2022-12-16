@@ -30,8 +30,8 @@ namespace ecs
 				printf("spawning enemy wave \n");
 
 				// we want them to spawn "above" the screen, hence the negative y distribution
-				std::uniform_int_distribution<> x_pos_dist(0, config::desktop_width);
-				std::uniform_int_distribution<> y_pos_dist(-200, -50);
+				std::uniform_int_distribution<> x_pos_dist(config::desktop_width / 4, config::desktop_width/4 * 3);
+				std::uniform_int_distribution<> y_pos_dist(0, config::desktop_height/4);
 
 
 				for (unsigned int i = 0; i < enemies_per_wave; i++)

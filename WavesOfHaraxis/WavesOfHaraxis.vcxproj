@@ -27,6 +27,7 @@
   <ItemGroup>
     <ClInclude Include="core\game_config.h" />
     <ClInclude Include="core\keyboard_state.h" />
+    <ClInclude Include="core\spatial_grid.h" />
     <ClInclude Include="core\SpriteManager.h" />
     <ClInclude Include="core\TransparentWindow.h" />
     <ClInclude Include="ecs\component_table.h" />
@@ -36,6 +37,7 @@
     <ClInclude Include="ecs\system.h" />
     <ClInclude Include="ecs\systems\all_systems.h" />
     <ClInclude Include="ecs\systems\apply_velocity_system.h" />
+    <ClInclude Include="ecs\systems\collision_damage_system.h" />
     <ClInclude Include="ecs\systems\bullet_despawn_system.h" />
     <ClInclude Include="ecs\systems\bullet_system.h" />
     <ClInclude Include="ecs\systems\cull_removed_system.h" />

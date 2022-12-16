@@ -20,17 +20,29 @@ namespace ecs
 				{
 					auto [pos, velocity, bounds] = world_context.get_components<Position, Velocity, Bounds>(entity);
 
+					Position old_pos = pos;
+
+					world_context.grid.remove_entity(entity, old_pos.x, old_pos.y);
 
 					pos.x += velocity.x_vel;
 					pos.y += velocity.y_vel;
 
 					if (pos.x > config::desktop_width)
-						pos.x = 0 - bounds.w;
+					{
+						//pos.x = 0 - bounds.w;
+						pos.x -= velocity.x_vel;
+					}
 
 					// (included 0 for clarity)
-					else if (pos.x < 0 - bounds.w)
-						pos.x = config::desktop_width;
+					else if (pos.x < 10)
+					{
+						//pos.x = config::desktop_width;
+						pos.y -= velocity.y_vel;
 
+					}
+						
+
+					world_context.grid.add_entity(entity, pos.x, pos.y);
 
 					world_context.remove_component<Velocity>(entity);
 				}

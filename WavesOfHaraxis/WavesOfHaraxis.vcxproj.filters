@@ -104,6 +104,12 @@
     <ClInclude Include="ecs\systems\cull_removed_system.h">
       <Filter>Header Files\Systems</Filter>
     </ClInclude>
+    <ClInclude Include="ecs\systems\collision_damage_system.h">
+      <Filter>Header Files\Systems</Filter>
+    </ClInclude>
+    <ClInclude Include="core\spatial_grid.h">
+      <Filter>Header Files\Core</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="res\spritesheet.json">

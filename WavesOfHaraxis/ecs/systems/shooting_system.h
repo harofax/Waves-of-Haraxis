@@ -26,11 +26,14 @@ namespace ecs
 					const int bounds_w = bullet_rect.w * config::render_scale;
 					const int bounds_h = bullet_rect.h * config::render_scale;
 
+					const float shoot_offset_x = pos.x + (bounds_w / 2) - (bullet_rect.w / 2);
+					const float shoot_offset_y = pos.y - (bounds.h / 2) - (bullet_rect.h / 2);
+
 					const auto bullet = world_context.create_entity();
 
 					world_context.add_component<Sprite>		(bullet, sprite_index);
 					world_context.add_component<Bullet>		(bullet, weapon.shoot_direction);
-					world_context.add_component<Position>	(bullet, pos.x + (bounds.w/2), pos.y);
+					world_context.add_component<Position>	(bullet, shoot_offset_x, shoot_offset_y);
 					world_context.add_component<Bounds>		(bullet, bounds_w, bounds_h);
 					world_context.add_component<Damaging>	(bullet, config::bullet_damage);
 

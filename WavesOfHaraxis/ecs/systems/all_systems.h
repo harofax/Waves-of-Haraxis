@@ -8,4 +8,5 @@
 #include "enemy_despawner_system.h"
 #include "bullet_despawn_system.h"
 #include "render_system.h"
+#include "collision_damage_system.h"
 #include "cull_removed_system.h"

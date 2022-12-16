@@ -5,6 +5,7 @@
 #include "entity_pool.h"
 #include "system.h"
 #include "components.h"
+#include "spatial_grid.h"
 
 namespace ecs
 {
@@ -15,6 +16,8 @@ namespace ecs
 		{
 			components_data.resize(comp_count);
 		}
+
+		spatial_grid grid;
 
 		template<typename T>
 		void register_component()
@@ -167,6 +170,8 @@ namespace ecs
 		std::vector<std::unique_ptr<base_component_table>> components_data{};
 		entity_pool entities;
 		std::vector<std::unique_ptr<system>> systems;
+		
+
 
 
 
