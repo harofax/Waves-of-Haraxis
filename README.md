@@ -1,14 +1,20 @@
 # Waves-of-Haraxis
-data-oriented space shooter made with SDL
 
-CONTROLS:
+### CONTROLS
+
 WASD -> movement
+
 SPACE -> shoot
+
 ESC -> exit
+
+---
 
 EXE is in the bin folder
 
 I recommend opening your favourite wallpaper in the background B^) (yes, the transparent background is intentional)
+
+---
 
 In this project I have utilized en Entity Component System to make the most out of a data-oriented approach in making this game.
 
