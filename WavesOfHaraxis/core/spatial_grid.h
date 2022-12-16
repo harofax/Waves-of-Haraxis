@@ -55,8 +55,6 @@ public:
 		const int grid_x = map_to_grid(pos_x);
 		const int grid_y = map_to_grid(pos_y);
 
-		printf("adding to grid [%d, %d]\n", grid_x, grid_y);
-
 		grid[grid_x][grid_y].entities.insert(entity);
 	}
 
