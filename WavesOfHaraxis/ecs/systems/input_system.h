@@ -6,10 +6,10 @@ namespace ecs
 {
 	namespace systems
 	{
-		class input_system : public system<COMPONENT_CAPACITY, SYSTEM_CAPACITY>
+		class input_system : public system
 		{
 		public:
-			input_system(world<COMPONENT_CAPACITY, SYSTEM_CAPACITY>& context, keyboard_state& kb) : system(context), input(kb)
+			input_system(world& context, keyboard_state& kb) : system(context), input(kb)
 			{
 				set_signature<PlayerInput, Position>();
 			}

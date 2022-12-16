@@ -5,7 +5,7 @@ namespace ecs
 {
 	namespace systems
 	{
-		class enemy_spawner_system : public system<COMPONENT_CAPACITY, SYSTEM_CAPACITY>
+		class enemy_spawner_system : public system
 		{
 			unsigned int enemies_per_wave;
 			float wave_timer;
@@ -13,7 +13,7 @@ namespace ecs
 			std::mt19937 rng;
 
 		public:
-			enemy_spawner_system(ecs::world<COMPONENT_CAPACITY, SYSTEM_CAPACITY>& context,
+			enemy_spawner_system(ecs::world& context,
 				const unsigned int num_enemies_per_wave,
 				float time_between_waves,
 				const std::mt19937& generator) :

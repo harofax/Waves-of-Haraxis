@@ -5,10 +5,10 @@ namespace ecs
 {
 	namespace systems
 	{
-		class cull_removed_system : public system<COMPONENT_CAPACITY, SYSTEM_CAPACITY>
+		class cull_removed_system : public system
 		{
 		public:
-			cull_removed_system(world<COMPONENT_CAPACITY, SYSTEM_CAPACITY>& context) : system(context)
+			cull_removed_system(world& context) : system(context)
 			{
 				set_signature<ToBeRemoved>();
 			}

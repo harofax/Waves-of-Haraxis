@@ -5,10 +5,10 @@ namespace ecs
 {
 	namespace systems
 	{
-		class bullet_system : public system<COMPONENT_CAPACITY, SYSTEM_CAPACITY>
+		class bullet_system : public system
 		{
 		public:
-			bullet_system(world<COMPONENT_CAPACITY, SYSTEM_CAPACITY>& context) : system(context)
+			bullet_system(world& context) : system(context)
 			{
 				set_signature<Bullet, Position>();
 			}

@@ -8,17 +8,21 @@
 
 namespace ecs
 {
-	template<std::size_t ComponentCapacity, std::size_t SystemCapacity>
 	class world
 	{
 	public:
+		world(std::size_t comp_count, std::size_t sys_count) : entities(comp_count, sys_count)
+		{
+			components_data.resize(comp_count);
+		}
+
 		template<typename T>
 		void register_component()
 		{
 			// check if component is valid
 			check_component_type<T>();
 			// make a new table for it                                          v--- the table type
-			components_data[T::component_id] = std::make_unique<component_table<T, ComponentCapacity, SystemCapacity>>(
+			components_data[T::component_id] = std::make_unique<component_table<T>>(
 				entities.get_entity_to_component(T::component_id));
 		}
 
@@ -34,14 +38,14 @@ namespace ecs
 
 		void reserve(std::size_t size)
 		{
-			for (auto i = static_cast<std::size_t>(0); i < ComponentCapacity; ++i)
+			for (auto& comp_table : components_data)
 			{
-				if (components_data[i])
+				if (comp_table)
 				{
-					components_data[i]->reserve(size);
+					comp_table->reserve(size);
 				}
-				entities.reserve(size);
 			}
+			entities.reserve(size);
 		}
 
 		entity create_entity()
@@ -51,11 +55,11 @@ namespace ecs
 
 		void remove_entity(entity r_entity)
 		{
-			for (auto i = static_cast<size_t>(0); i < ComponentCapacity; ++i)
+			for (auto& comp_table : components_data)
 			{
-				if (components_data[i])
+				if (comp_table)
 				{
-					components_data[i]->try_remove(r_entity);
+					comp_table->try_remove(r_entity);
 				}
 
 			}
@@ -77,25 +81,25 @@ namespace ecs
 		}
 
 		template<typename T>
-		bool has_component(entity entity) const
+		bool has_component(ecs::entity entity) const
 		{
 			// check if comp is valid
 			check_component_type<T>();
 
 			// check the signature to see if the component id bit is set
-			return entities.template has_component<T>(entity);
+			return entities.has_component<T>(entity);
 		}
 
 		template<typename ...Ts>
-		bool has_components(entity entity) const
+		bool has_components(ecs::entity entity) const
 		{
 			check_component_types<Ts...>();
 			
-			return entities.template has_components<Ts...>(entity);
+			return entities.has_components<Ts...>(entity);
 		}
 
 		template<typename T>
-		T& get_component(entity entity)
+		T& get_component(ecs::entity entity)
 		{
 			check_component_type<T>();
 			return get_component_table<T>()->get(entity);
@@ -103,7 +107,7 @@ namespace ecs
 
 
 		template<typename T>
-		const T& get_component(entity entity) const
+		const T& get_component(ecs::entity entity) const
 		{
 			check_component_type<T>();
 			return get_component_table<T>()->get(entity);
@@ -160,9 +164,9 @@ namespace ecs
 		}
 
 	private:
-		std::array<std::unique_ptr<base_component_table>, ComponentCapacity> components_data{};
-		entity_pool<ComponentCapacity, SystemCapacity> entities{};
-		std::vector<std::unique_ptr<system<ComponentCapacity, SystemCapacity>>> systems{};
+		std::vector<std::unique_ptr<base_component_table>> components_data{};
+		entity_pool entities;
+		std::vector<std::unique_ptr<system>> systems;
 
 
 
@@ -181,12 +185,12 @@ namespace ecs
 		template<typename T>
 		auto get_component_table()
 		{
-			return static_cast<component_table<T, ComponentCapacity, SystemCapacity>*>(components_data[T::component_id].get());
+			return static_cast<component_table<T>*>(components_data[T::component_id].get());
 		}
 		template<typename T>
 		auto get_component_table() const
 		{
-			return static_cast<const component_table<T, ComponentCapacity, SystemCapacity>*>(components_data[T::component_id].get());
+			return static_cast<const component_table<T>*>(components_data[T::component_id].get());
 		};
 
 	};

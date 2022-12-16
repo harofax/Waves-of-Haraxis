@@ -13,7 +13,7 @@ namespace ecs
 		virtual bool try_remove(entity entity) = 0;
 	};
 
-	template<typename T, std::size_t ComponentCapacity, std::size_t SystemCapacity>
+	template<typename T>
 	class component_table : public base_component_table
 	{
 	public:

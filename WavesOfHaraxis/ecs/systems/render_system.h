@@ -8,11 +8,11 @@ namespace ecs
 {
 	namespace systems
 	{
-		class render_system : public system<COMPONENT_CAPACITY, SYSTEM_CAPACITY>
+		class render_system : public system
 		{
 		public:
 
-			render_system(ecs::world<COMPONENT_CAPACITY, SYSTEM_CAPACITY>& context, SDL_Renderer* renderer) : system(context)
+			render_system(ecs::world& context, SDL_Renderer* renderer) : system(context)
 			{
 				this->renderer = renderer;
 		

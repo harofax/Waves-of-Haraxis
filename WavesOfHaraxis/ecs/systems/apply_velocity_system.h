@@ -5,11 +5,11 @@ namespace ecs
 {
 	namespace systems
 	{
-		class apply_velocity_system : public system<COMPONENT_CAPACITY, SYSTEM_CAPACITY>
+		class apply_velocity_system : public system
 		{
 		public:
 
-			apply_velocity_system(ecs::world<COMPONENT_CAPACITY, SYSTEM_CAPACITY>& context) : system(context)
+			apply_velocity_system(ecs::world& context) : system(context)
 			{
 				set_signature<Position, Velocity, Bounds>();
 			}

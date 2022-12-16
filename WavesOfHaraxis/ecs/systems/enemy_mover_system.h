@@ -5,10 +5,10 @@ namespace ecs
 {
 	namespace systems
 	{
-		class enemy_mover_system : public system<COMPONENT_CAPACITY, SYSTEM_CAPACITY>
+		class enemy_mover_system : public system
 		{
 		public:
-			enemy_mover_system(world<COMPONENT_CAPACITY, SYSTEM_CAPACITY>& context ) : system(context)
+			enemy_mover_system(world& context ) : system(context)
 			{
 				set_signature<Enemy, Position, Alive>();
 			}

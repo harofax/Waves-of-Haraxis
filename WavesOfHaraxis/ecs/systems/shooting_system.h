@@ -5,10 +5,10 @@ namespace ecs
 {
 	namespace systems
 	{
-		class shooting_system : public system<COMPONENT_CAPACITY, SYSTEM_CAPACITY>
+		class shooting_system : public system
 		{
 		public:
-			shooting_system(world<COMPONENT_CAPACITY, SYSTEM_CAPACITY>& context) : system(context)
+			shooting_system(world& context) : system(context)
 			{
 				set_signature<Weapon, Shooting, Position, Bounds>();
 			}

@@ -11,14 +11,13 @@
 
 namespace ecs
 {
-	template<std::size_t ComponentCapacity, std::size_t SystemCapacity>
+
 	class world;
 
-	template<std::size_t ComponentCapacity, std::size_t SystemCapacity>
 	class system
 	{
 	public:
-		system(world<ComponentCapacity, SystemCapacity>& context) : world_context(context)
+		system(world& context) : world_context(context)
 		{
 			// set default signature check for systems that dont check for it
 			check_signature = [this](ecs::entity entity)
@@ -37,7 +36,7 @@ namespace ecs
 		{
 			check_signature = [this](ecs::entity entity)
 			{
-				return entities->template has_components<Ts...>(entity);
+				return entities->has_components<Ts...>(entity);
 			};
 		}
 
@@ -46,22 +45,22 @@ namespace ecs
 			return managed_entities;
 		}
 
-		world<ComponentCapacity, SystemCapacity>& world_context;
+		world& world_context;
 
 		virtual void on_managed_entity_added([[maybe_unused]] entity entity) {}
 		virtual void on_managed_entity_removed([[maybe_unused]] entity entity) {}
 
 	private:
-		friend ecs::world<ComponentCapacity, SystemCapacity>;
+		friend ecs::world;
 
 		std::function<bool(ecs::entity)> check_signature;
 		std::size_t system_type;
 		std::vector<entity> managed_entities;
 		std::vector<entity_index>* entity_to_managed_entity = nullptr;
-		const entity_pool<ComponentCapacity, SystemCapacity>* entities = nullptr;
+		const entity_pool* entities = nullptr;
 
 		void init(std::size_t type, std::vector<entity_index>* entity_to_managed_entity_map,
-			const entity_pool<ComponentCapacity, SystemCapacity>* entities_pool)
+			const entity_pool* entities_pool)
 		{
 			system_type = type;
 			entity_to_managed_entity = entity_to_managed_entity_map;

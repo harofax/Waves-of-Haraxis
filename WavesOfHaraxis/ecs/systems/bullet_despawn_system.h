@@ -5,10 +5,10 @@ namespace ecs
 {
 	namespace systems
 	{
-		class bullet_despawn_system : public system<COMPONENT_CAPACITY, SYSTEM_CAPACITY>
+		class bullet_despawn_system : public system
 		{
 		public:
-			bullet_despawn_system(world<COMPONENT_CAPACITY, SYSTEM_CAPACITY>& context) : system(context)
+			bullet_despawn_system(world& context) : system(context)
 			{
 				set_signature<Bullet, Position, Bounds>();
 			}

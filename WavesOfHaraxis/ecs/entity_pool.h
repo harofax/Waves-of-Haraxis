@@ -5,11 +5,13 @@
 
 namespace ecs
 {
-    template<std::size_t ComponentCapacity, std::size_t SystemCapacity>
     class entity_pool
     {
 
     public:
+        entity_pool(std::size_t component_count, std::size_t system_count) :
+    	entity_to_component_map(component_count),
+    	entity_to_managed_entities(system_count) {}
 
         void reserve(std::size_t amount)
         {
@@ -105,8 +107,9 @@ namespace ecs
 
     private:
         entity next_entity = 0;
-        std::array<std::vector<entity_index>, ComponentCapacity> entity_to_component_map;
-        std::array<std::vector<entity_index>, SystemCapacity> entity_to_managed_entities;
+        std::vector<std::vector<entity_index>> entity_to_component_map;
+        std::vector<std::vector<entity_index>> entity_to_managed_entities;
+
         std::vector<entity> available_entities;
     };
 

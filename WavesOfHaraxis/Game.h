@@ -40,6 +40,6 @@ private:
 	//SDL_Texture* texture_atlas {nullptr};
 	//json load_json_data(const char* json_path) const;
 
-	ecs::world<ecs::COMPONENT_CAPACITY, ecs::SYSTEM_CAPACITY> world;
+	ecs::world world{ecs::COMPONENT_CAPACITY, ecs::SYSTEM_CAPACITY};
 };
 
