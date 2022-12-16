@@ -8,6 +8,7 @@ namespace ecs
 		class enemy_spawner_system : public system
 		{
 			unsigned int enemies_per_wave;
+			int wave_counter = 0;
 			float wave_timer;
 			float time_remaining;
 			std::mt19937 rng;
@@ -22,6 +23,9 @@ namespace ecs
 				enemies_per_wave = num_enemies_per_wave;
 				wave_timer = time_between_waves;
 				time_remaining = wave_timer;
+
+				wave_counter = 0;
+
 				rng = generator;
 			}
 
@@ -40,6 +44,17 @@ namespace ecs
 					int pos_y = y_pos_dist(rng);
 
 					int sprite_ind = SpriteManager::sprite_range_table[SpriteManager::ENEMY_SPRITE_RANGE_INDEX] - 1;
+
+					auto enemy_hp = config::enemy_hp + wave_counter / 2;
+
+					int enemy_damage = 1 ;
+
+					if (wave_counter % 3 == 0)
+					{
+						sprite_ind--;
+						enemy_hp *= 2;
+						enemy_damage *= 2;
+					}
 
 					SDL_Rect enemy_rect = SpriteManager::sprite_table[sprite_ind];
 
@@ -63,7 +78,8 @@ namespace ecs
 					world_context.add_component<Sprite>(enemy, sprite_ind);
 					world_context.add_component<Position>(enemy, pos_x, pos_y);
 					world_context.add_component<Bounds>(enemy, enemy_rect.w, enemy_rect.h);
-					world_context.add_component<Weapon>(enemy, config::bullet_damage, 1);
+					world_context.add_component<Damaging>(enemy, enemy_damage);
+					world_context.add_component<Health>(enemy, enemy_hp);
 					world_context.add_component<Enemy>(enemy);
 					world_context.add_component<Alive>(enemy);
 				}
@@ -76,6 +92,7 @@ namespace ecs
 				{
 					spawn_enemies();
 					time_remaining = wave_timer;
+					wave_counter++;
 				}
 			}
 		};

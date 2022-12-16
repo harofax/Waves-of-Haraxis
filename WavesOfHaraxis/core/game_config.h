@@ -17,8 +17,11 @@ namespace config
 	inline float player_speed = 1.f;
 	inline float enemy_base_speed = 1.f;
 
+	inline int player_hp = 1;
+
 	inline int enemy_time_between_waves = 0;
 	inline int enemies_per_wave = 0;
+	inline int enemy_hp = 1;
 
 	inline int bullet_damage = 1;
 	inline float bullet_speed = 500.f;

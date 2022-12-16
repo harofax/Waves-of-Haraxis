@@ -46,6 +46,9 @@ void parse_json_data(json::const_reference data)
     config::enemy_time_between_waves = data["config"]["time_between_waves"];
     config::enemies_per_wave = data["config"]["enemies_per_wave"];
 
+	config::enemy_hp = data["config"]["enemy_base_hp"];
+    config::player_hp = data["config"]["player_hp"];
+
     config::player_speed = data["config"]["player_speed"];
     config::enemy_base_speed = data["config"]["enemy_base_speed"];
 
@@ -212,6 +215,8 @@ void Game::init_ecs()
     world.create_system<ecs::systems::cull_removed_system>(world);
 
     world.create_system<ecs::systems::collision_damage_system>(world);
+    world.create_system<ecs::systems::enemy_contact_damage_system>(world);
+    world.create_system<ecs::systems::kill_dead_system>(world);
     world.create_system<ecs::systems::render_system>(world, renderer);
 
 }
@@ -291,6 +296,7 @@ void Game::init_players()
         world.add_component<ecs::Position>(player, pos_x, pos_y);
         world.add_component<ecs::PlayerInput>(player, true);
         world.add_component<ecs::Weapon>(player, config::bullet_damage, -1);
+        world.add_component<ecs::Health>(player, config::player_hp);
 
         //PlayerShip player
         //{

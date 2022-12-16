@@ -10,3 +10,5 @@
 #include "render_system.h"
 #include "collision_damage_system.h"
 #include "cull_removed_system.h"
+#include "kill_dead_system.h"
+#include "enemy_contact_damage_system.h"

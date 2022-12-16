@@ -41,10 +41,12 @@
     <ClInclude Include="ecs\systems\bullet_despawn_system.h" />
     <ClInclude Include="ecs\systems\bullet_system.h" />
     <ClInclude Include="ecs\systems\cull_removed_system.h" />
+    <ClInclude Include="ecs\systems\enemy_contact_damage_system.h" />
     <ClInclude Include="ecs\systems\enemy_despawner_system.h" />
     <ClInclude Include="ecs\systems\enemy_mover_system.h" />
     <ClInclude Include="ecs\systems\enemy_spawner_system.h" />
     <ClInclude Include="ecs\systems\input_system.h" />
+    <ClInclude Include="ecs\systems\kill_dead_system.h" />
     <ClInclude Include="ecs\systems\render_system.h" />
     <ClInclude Include="ecs\systems\shooting_system.h" />
     <ClInclude Include="ecs\world.h" />

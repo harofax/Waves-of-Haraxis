@@ -250,6 +250,8 @@
 		"time_between_waves": 3,
 		"enemies_per_wave": 20,
 		"enemy_base_speed": 150,
+		"enemy_base_hp": 1,
+		"player_hp": 10,
 		"bullet_speed": 200,
 		"bullet_damage": 1,
 		"scale": 2

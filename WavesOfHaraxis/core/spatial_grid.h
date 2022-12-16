@@ -69,12 +69,12 @@ public:
 		grid[grid_x][grid_y].entities.erase(entity);
 	}
 
-	std::set<ecs::entity> get_entities_at(float pos_x, float pos_y)
+	GridUnit get_entities_at(float pos_x, float pos_y)
 	{
 		const int grid_x = map_to_grid(pos_x);
 		const int grid_y = map_to_grid(pos_y);
 
-		return grid[grid_x][grid_y].entities;
+		return grid[grid_x][grid_y];
 	}
 
 	std::vector<std::vector<GridUnit>> grid{};

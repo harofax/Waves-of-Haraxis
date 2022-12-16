@@ -110,6 +110,12 @@
     <ClInclude Include="core\spatial_grid.h">
       <Filter>Header Files\Core</Filter>
     </ClInclude>
+    <ClInclude Include="ecs\systems\kill_dead_system.h">
+      <Filter>Header Files\Systems</Filter>
+    </ClInclude>
+    <ClInclude Include="ecs\systems\enemy_contact_damage_system.h">
+      <Filter>Header Files\Systems</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="res\spritesheet.json">
